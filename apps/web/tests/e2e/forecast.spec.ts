@@ -8,7 +8,7 @@ import { forecastGame } from "../../games/forecast";
 // exercises the game through the internal `/dev/games/forecast` route
 // (see that route's doc comment) — identical behaviour to what `/forecast`
 // will serve once the registry wires it up.
-const ROUTE = "/dev/games/forecast";
+const ROUTE = "/forecast";
 
 const dateKey = localDateKey();
 const seed = forecastGame.dailySeed(dateKey);

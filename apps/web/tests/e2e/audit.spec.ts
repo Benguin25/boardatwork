@@ -8,7 +8,7 @@ import { auditGame } from "../../games/audit";
 // exercises the game through the internal `/dev/games/audit` route (see
 // that route's doc comment) — identical behaviour to what `/audit` will
 // serve once the registry wires it up.
-const ROUTE = "/dev/games/audit";
+const ROUTE = "/audit";
 
 const dateKey = localDateKey();
 const seed = auditGame.dailySeed(dateKey);

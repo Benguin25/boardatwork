@@ -9,7 +9,7 @@ import { policyGame } from "../../games/policy";
 // exercises the game through the internal `/dev/games/policy` route (see
 // that route's doc comment) — identical behaviour to what `/policy` will
 // serve once the registry wires it up.
-const ROUTE = "/dev/games/policy";
+const ROUTE = "/policy";
 
 const dateKey = localDateKey();
 const seed = policyGame.dailySeed(dateKey);

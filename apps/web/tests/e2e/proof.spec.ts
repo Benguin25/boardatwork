@@ -8,7 +8,7 @@ import { proofGame } from "../../games/proof";
 // exercises the game through the internal `/dev/games/proof` route (see
 // that route's doc comment) — identical behaviour to what `/proof` will
 // serve once the registry wires it up.
-const ROUTE = "/dev/games/proof";
+const ROUTE = "/proof";
 
 const dateKey = localDateKey();
 const seed = proofGame.dailySeed(dateKey);

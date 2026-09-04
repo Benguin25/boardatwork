@@ -8,7 +8,7 @@ import { orgGame } from "../../games/org";
 // the game through the internal `/dev/games/org` route (see that route's
 // doc comment) — identical behaviour to what `/org` will serve once the
 // registry wires it up.
-const ROUTE = "/dev/games/org";
+const ROUTE = "/org";
 
 const dateKey = localDateKey();
 const seed = orgGame.dailySeed(dateKey);
