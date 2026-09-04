@@ -1,73 +1,1941 @@
 [
-  { "theme": "Both are capital cities", "words": ["LISBON", "BERLIN"], "difficulty": "easy" },
-  { "theme": "Both are planets", "words": ["SATURN", "URANUS"], "difficulty": "medium" },
-  { "theme": "Both are colours", "words": ["ORANGE", "MAROON"], "difficulty": "easy" },
-  { "theme": "Both are animals", "words": ["BADGER", "FERRET"], "difficulty": "easy" },
-  { "theme": "Both are found in a kitchen", "words": ["GRATER", "TOASTER"], "difficulty": "medium" },
-  { "theme": "Both are instruments", "words": ["TRUMPET", "GUITAR"], "difficulty": "medium" },
-  { "theme": "Both are weather", "words": ["THUNDER", "DRIZZLE"], "difficulty": "hard" },
-  { "theme": "Both are organs", "words": ["KIDNEY", "SPLEEN"], "difficulty": "medium" },
-  { "theme": "Both are trees", "words": ["WILLOW", "POPLAR"], "difficulty": "easy" },
-  { "theme": "Both are gemstones", "words": ["GARNET", "TOPAZ"], "difficulty": "medium" },
-  { "theme": "Both are dances", "words": ["TANGO", "SAMBA"], "difficulty": "easy" },
-  { "theme": "Both are birds", "words": ["FALCON", "PIGEON"], "difficulty": "easy" },
-  { "theme": "Both are fabrics", "words": ["DENIM", "VELVET"], "difficulty": "medium" },
-  { "theme": "Both are card games", "words": ["POKER", "BRIDGE"], "difficulty": "medium" },
-  { "theme": "Both are seas", "words": ["CORAL", "BALTIC"], "difficulty": "hard" },
-  { "theme": "Both are cheeses", "words": ["CHEDDAR", "GOUDA"], "difficulty": "medium" },
-  { "theme": "Both are herbs", "words": ["BASIL", "THYME"], "difficulty": "easy" },
-  { "theme": "Both are constellations", "words": ["ORION", "LYRA"], "difficulty": "hard" },
-  { "theme": "Both are units of time", "words": ["MINUTE", "SECOND"], "difficulty": "easy" },
-  { "theme": "Both are chess pieces", "words": ["BISHOP", "KNIGHT"], "difficulty": "medium" },
-  { "theme": "Both are rivers", "words": ["THAMES", "DANUBE"], "difficulty": "hard" },
-  { "theme": "Both are spices", "words": ["GINGER", "NUTMEG"], "difficulty": "medium" },
-  { "theme": "Both are shapes", "words": ["CIRCLE", "SQUARE"], "difficulty": "easy" },
-  { "theme": "Both are metals", "words": ["COPPER", "SILVER"], "difficulty": "easy" },
-  { "theme": "Both are insects", "words": ["BEETLE", "CRICKET"], "difficulty": "medium" },
-  { "theme": "Both are flowers", "words": ["TULIP", "DAISY"], "difficulty": "easy" },
-  { "theme": "Both are fruits", "words": ["MANGO", "PAPAYA"], "difficulty": "easy" },
-  { "theme": "Both are vegetables", "words": ["CARROT", "TURNIP"], "difficulty": "easy" },
-  { "theme": "Both are types of pasta", "words": ["PENNE", "FUSILLI"], "difficulty": "medium" },
-  { "theme": "Both are musical genres", "words": ["JAZZ", "REGGAE"], "difficulty": "medium" },
-  { "theme": "Both are boxing terms", "words": ["HOOK", "UPPERCUT"], "difficulty": "hard" },
-  { "theme": "Both are types of boat", "words": ["CANOE", "KAYAK"], "difficulty": "easy" },
-  { "theme": "Both are desserts", "words": ["SORBET", "MOUSSE"], "difficulty": "medium" },
-  { "theme": "Both are weather instruments", "words": ["BAROMETER", "VANE"], "difficulty": "hard" },
-  { "theme": "Both are knots", "words": ["BOWLINE", "CLOVE"], "difficulty": "hard" },
-  { "theme": "Both are board games", "words": ["CHESS", "DRAUGHTS"], "difficulty": "hard" },
-  { "theme": "Both are stringed instruments", "words": ["VIOLIN", "CELLO"], "difficulty": "medium" },
-  { "theme": "Both are precipitation", "words": ["SLEET", "HAIL"], "difficulty": "easy" },
-  { "theme": "Both are types of bread", "words": ["BAGUETTE", "CIABATTA"], "difficulty": "hard" },
-  { "theme": "Both are big cats", "words": ["JAGUAR", "PANTHER"], "difficulty": "medium" },
-  { "theme": "Both are card suits", "words": ["SPADE", "CLUB"], "difficulty": "easy" },
-  { "theme": "Both are units of length", "words": ["METRE", "FURLONG"], "difficulty": "medium" },
-  { "theme": "Both are sushi terms", "words": ["NIGIRI", "SASHIMI"], "difficulty": "hard" },
-  { "theme": "Both are punctuation marks", "words": ["COMMA", "SEMICOLON"], "difficulty": "hard" },
-  { "theme": "Both are yoga poses", "words": ["COBRA", "TRIANGLE"], "difficulty": "medium" },
-  { "theme": "Both are hairstyles", "words": ["BRAID", "MULLET"], "difficulty": "medium" },
-  { "theme": "Both are cocktails", "words": ["MOJITO", "MARTINI"], "difficulty": "medium" },
-  { "theme": "Both are moons of Jupiter", "words": ["EUROPA", "GANYMEDE"], "difficulty": "hard" },
-  { "theme": "Both are kitchen tools", "words": ["WHISK", "LADLE"], "difficulty": "easy" },
-  { "theme": "Both are types of hat", "words": ["FEDORA", "BERET"], "difficulty": "medium" },
-  { "theme": "Both are dog breeds", "words": ["POODLE", "BOXER"], "difficulty": "easy" },
-  { "theme": "Both are sea creatures", "words": ["OCTOPUS", "STARFISH"], "difficulty": "hard" },
-  { "theme": "Both are countries in Europe", "words": ["FRANCE", "POLAND"], "difficulty": "easy" },
-  { "theme": "Both are units of weight", "words": ["OUNCE", "STONE"], "difficulty": "easy" },
-  { "theme": "Both are architectural styles", "words": ["GOTHIC", "BAROQUE"], "difficulty": "hard" },
-  { "theme": "Both are martial arts", "words": ["KARATE", "JUDO"], "difficulty": "medium" },
-  { "theme": "Both are types of cloud", "words": ["CIRRUS", "CUMULUS"], "difficulty": "hard" },
-  { "theme": "Both are keyboard keys", "words": ["SHIFT", "ENTER"], "difficulty": "easy" },
-  { "theme": "Both are festivals of light", "words": ["DIWALI", "HANUKKAH"], "difficulty": "hard" },
-  { "theme": "Both are Olympic sports", "words": ["FENCING", "ARCHERY"], "difficulty": "medium" },
-  { "theme": "Both are feelings", "words": ["SORROW", "TERROR", "WONDER"], "difficulty": "triple" },
-  { "theme": "All three are trees", "words": ["WILLOW", "POPLAR", "SPRUCE"], "difficulty": "triple" },
-  { "theme": "All three are gemstones", "words": ["GARNET", "TOPAZ", "AMBER"], "difficulty": "triple" },
-  { "theme": "All three are seasonings", "words": ["PEPPER", "GINGER", "CUMIN"], "difficulty": "triple" },
-  { "theme": "All three are card games", "words": ["POKER", "BRIDGE", "RUMMY"], "difficulty": "triple" },
-  { "theme": "All three are big cats", "words": ["TIGER", "JAGUAR", "PUMA"], "difficulty": "triple" },
-  { "theme": "All three are string instruments", "words": ["VIOLIN", "CELLO", "VIOLA"], "difficulty": "triple" },
-  { "theme": "All three are precipitation", "words": ["SLEET", "SNOW", "HAIL"], "difficulty": "triple" },
-  { "theme": "All three are dances", "words": ["TANGO", "SAMBA", "SALSA"], "difficulty": "triple" },
-  { "theme": "All three are metals", "words": ["COPPER", "SILVER", "IRON"], "difficulty": "triple" },
-  { "theme": "All three are Greek letters", "words": ["ALPHA", "OMEGA", "SIGMA"], "difficulty": "triple" }
+  {
+    "theme": "Both are capital cities",
+    "words": [
+      "LISBON",
+      "BERLIN"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are planets",
+    "words": [
+      "SATURN",
+      "URANUS"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are colours",
+    "words": [
+      "ORANGE",
+      "MAROON"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are animals",
+    "words": [
+      "BADGER",
+      "FERRET"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are found in a kitchen",
+    "words": [
+      "GRATER",
+      "TOASTER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are instruments",
+    "words": [
+      "TRUMPET",
+      "GUITAR"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are weather",
+    "words": [
+      "THUNDER",
+      "DRIZZLE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are organs",
+    "words": [
+      "KIDNEY",
+      "SPLEEN"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are trees",
+    "words": [
+      "WILLOW",
+      "POPLAR"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are gemstones",
+    "words": [
+      "GARNET",
+      "TOPAZ"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are dances",
+    "words": [
+      "TANGO",
+      "SAMBA"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are birds",
+    "words": [
+      "FALCON",
+      "PIGEON"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are fabrics",
+    "words": [
+      "DENIM",
+      "VELVET"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are card games",
+    "words": [
+      "POKER",
+      "BRIDGE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are seas",
+    "words": [
+      "CORAL",
+      "BALTIC"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are cheeses",
+    "words": [
+      "CHEDDAR",
+      "GOUDA"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are herbs",
+    "words": [
+      "BASIL",
+      "THYME"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are constellations",
+    "words": [
+      "ORION",
+      "LYRA"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are units of time",
+    "words": [
+      "MINUTE",
+      "SECOND"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are chess pieces",
+    "words": [
+      "BISHOP",
+      "KNIGHT"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are rivers",
+    "words": [
+      "THAMES",
+      "DANUBE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are spices",
+    "words": [
+      "GINGER",
+      "NUTMEG"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are shapes",
+    "words": [
+      "CIRCLE",
+      "SQUARE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are metals",
+    "words": [
+      "COPPER",
+      "SILVER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are insects",
+    "words": [
+      "BEETLE",
+      "CRICKET"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are flowers",
+    "words": [
+      "TULIP",
+      "DAISY"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are fruits",
+    "words": [
+      "MANGO",
+      "PAPAYA"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are vegetables",
+    "words": [
+      "CARROT",
+      "TURNIP"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of pasta",
+    "words": [
+      "PENNE",
+      "FUSILLI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are musical genres",
+    "words": [
+      "JAZZ",
+      "REGGAE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are boxing terms",
+    "words": [
+      "HOOK",
+      "UPPERCUT"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are types of boat",
+    "words": [
+      "CANOE",
+      "KAYAK"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are desserts",
+    "words": [
+      "SORBET",
+      "MOUSSE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are weather instruments",
+    "words": [
+      "BAROMETER",
+      "VANE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are knots",
+    "words": [
+      "BOWLINE",
+      "CLOVE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are board games",
+    "words": [
+      "CHESS",
+      "DRAUGHTS"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are stringed instruments",
+    "words": [
+      "VIOLIN",
+      "CELLO"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are precipitation",
+    "words": [
+      "SLEET",
+      "HAIL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of bread",
+    "words": [
+      "BAGUETTE",
+      "CIABATTA"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are big cats",
+    "words": [
+      "JAGUAR",
+      "PANTHER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are card suits",
+    "words": [
+      "SPADE",
+      "CLUB"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are units of length",
+    "words": [
+      "METRE",
+      "FURLONG"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are sushi terms",
+    "words": [
+      "NIGIRI",
+      "SASHIMI"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are punctuation marks",
+    "words": [
+      "COMMA",
+      "SEMICOLON"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are yoga poses",
+    "words": [
+      "COBRA",
+      "TRIANGLE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are hairstyles",
+    "words": [
+      "BRAID",
+      "MULLET"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are cocktails",
+    "words": [
+      "MOJITO",
+      "MARTINI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are moons of Jupiter",
+    "words": [
+      "EUROPA",
+      "GANYMEDE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are kitchen tools",
+    "words": [
+      "WHISK",
+      "LADLE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of hat",
+    "words": [
+      "FEDORA",
+      "BERET"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are dog breeds",
+    "words": [
+      "POODLE",
+      "BOXER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are sea creatures",
+    "words": [
+      "OCTOPUS",
+      "STARFISH"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are countries in Europe",
+    "words": [
+      "FRANCE",
+      "POLAND"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are units of weight",
+    "words": [
+      "OUNCE",
+      "STONE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are architectural styles",
+    "words": [
+      "GOTHIC",
+      "BAROQUE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are martial arts",
+    "words": [
+      "KARATE",
+      "JUDO"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are types of cloud",
+    "words": [
+      "CIRRUS",
+      "CUMULUS"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are keyboard keys",
+    "words": [
+      "SHIFT",
+      "ENTER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are festivals of light",
+    "words": [
+      "DIWALI",
+      "HANUKKAH"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are Olympic sports",
+    "words": [
+      "FENCING",
+      "ARCHERY"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are feelings",
+    "words": [
+      "SORROW",
+      "TERROR",
+      "WONDER"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are trees",
+    "words": [
+      "WILLOW",
+      "POPLAR",
+      "SPRUCE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are gemstones",
+    "words": [
+      "GARNET",
+      "TOPAZ",
+      "AMBER"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are seasonings",
+    "words": [
+      "PEPPER",
+      "GINGER",
+      "CUMIN"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are card games",
+    "words": [
+      "POKER",
+      "BRIDGE",
+      "RUMMY"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are big cats",
+    "words": [
+      "TIGER",
+      "JAGUAR",
+      "PUMA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are string instruments",
+    "words": [
+      "VIOLIN",
+      "CELLO",
+      "VIOLA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are precipitation",
+    "words": [
+      "SLEET",
+      "SNOW",
+      "HAIL"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are dances",
+    "words": [
+      "TANGO",
+      "SAMBA",
+      "SALSA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are metals",
+    "words": [
+      "COPPER",
+      "SILVER",
+      "IRON"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are Greek letters",
+    "words": [
+      "ALPHA",
+      "OMEGA",
+      "SIGMA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "Both are countries in Asia",
+    "words": [
+      "JAPAN",
+      "CHINA"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are countries in Africa",
+    "words": [
+      "KENYA",
+      "EGYPT"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are countries in South America",
+    "words": [
+      "PERU",
+      "CHILE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are US states",
+    "words": [
+      "TEXAS",
+      "IDAHO"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are citrus fruits",
+    "words": [
+      "LEMON",
+      "ORANGE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are root vegetables",
+    "words": [
+      "ONION",
+      "RADISH"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are farm animals",
+    "words": [
+      "SHEEP",
+      "GOAT"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are common pets",
+    "words": [
+      "PARROT",
+      "RABBIT"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are colours",
+    "words": [
+      "PURPLE",
+      "YELLOW"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are seasons",
+    "words": [
+      "SPRING",
+      "WINTER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are body parts",
+    "words": [
+      "ELBOW",
+      "ANKLE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are kitchen items",
+    "words": [
+      "SPOON",
+      "PLATE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of weather",
+    "words": [
+      "CLOUD",
+      "STORM"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are shapes",
+    "words": [
+      "OVAL",
+      "RHOMBUS"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are sports",
+    "words": [
+      "TENNIS",
+      "HOCKEY"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are hand tools",
+    "words": [
+      "HAMMER",
+      "PLIERS"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are modes of transport",
+    "words": [
+      "BICYCLE",
+      "SCOOTER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are musical instruments",
+    "words": [
+      "FLUTE",
+      "PIANO"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are sea creatures",
+    "words": [
+      "SHARK",
+      "WHALE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are trees",
+    "words": [
+      "MAPLE",
+      "CEDAR"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are flowers",
+    "words": [
+      "ROSE",
+      "LILY"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are desserts",
+    "words": [
+      "CAKE",
+      "TART"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are breakfast foods",
+    "words": [
+      "BACON",
+      "TOAST"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are board games",
+    "words": [
+      "LUDO",
+      "SORRY"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are card games",
+    "words": [
+      "SNAP",
+      "WHIST"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are emotions",
+    "words": [
+      "HAPPY",
+      "ANGRY"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are precious metals",
+    "words": [
+      "GOLD",
+      "SILVER"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are weather phenomena",
+    "words": [
+      "FROST",
+      "BREEZE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are insects",
+    "words": [
+      "MOTH",
+      "WASP"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are reptiles",
+    "words": [
+      "SNAKE",
+      "LIZARD"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are kitchen appliances",
+    "words": [
+      "OVEN",
+      "FRIDGE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are school subjects",
+    "words": [
+      "MATHS",
+      "MUSIC"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are items of clothing",
+    "words": [
+      "JACKET",
+      "JEANS"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of footwear",
+    "words": [
+      "BOOTS",
+      "SANDAL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are units of time",
+    "words": [
+      "HOUR",
+      "MONTH"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are currencies",
+    "words": [
+      "EURO",
+      "PESO"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are zoo animals",
+    "words": [
+      "ZEBRA",
+      "GIRAFFE"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are hot drinks",
+    "words": [
+      "COFFEE",
+      "COCOA"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are types of bread",
+    "words": [
+      "ROLLS",
+      "BAGEL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are pieces of sports equipment",
+    "words": [
+      "HELMET",
+      "RACKET"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "theme": "Both are countries in the Middle East",
+    "words": [
+      "ISRAEL",
+      "JORDAN"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are European rivers",
+    "words": [
+      "SEINE",
+      "RHINE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are mountain ranges",
+    "words": [
+      "ANDES",
+      "ALPS"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are deserts",
+    "words": [
+      "SAHARA",
+      "GOBI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are famous volcanoes",
+    "words": [
+      "ETNA",
+      "FUJI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are pasta shapes",
+    "words": [
+      "RIGATONI",
+      "LINGUINE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are cheeses",
+    "words": [
+      "ROQUEFORT",
+      "STILTON"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are spices",
+    "words": [
+      "OREGANO",
+      "PAPRIKA"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are Japanese dishes",
+    "words": [
+      "TEMPURA",
+      "EDAMAME"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are dances",
+    "words": [
+      "FLAMENCO",
+      "WALTZ"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are art movements",
+    "words": [
+      "CUBISM",
+      "DADAISM"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are literary genres",
+    "words": [
+      "MYSTERY",
+      "FANTASY"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are poetry forms",
+    "words": [
+      "SONNET",
+      "HAIKU"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are chess terms",
+    "words": [
+      "CASTLE",
+      "GAMBIT"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are yoga poses",
+    "words": [
+      "LOTUS",
+      "EAGLE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are sea creatures",
+    "words": [
+      "JELLYFISH",
+      "SEAHORSE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are big cats",
+    "words": [
+      "LEOPARD",
+      "CHEETAH"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are birthstones",
+    "words": [
+      "EMERALD",
+      "SAPPHIRE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are music genres",
+    "words": [
+      "TECHNO",
+      "TRANCE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are cocktails",
+    "words": [
+      "DAIQUIRI",
+      "NEGRONI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are hairstyles",
+    "words": [
+      "PONYTAIL",
+      "FRINGE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are types of hat",
+    "words": [
+      "TRILBY",
+      "BOWLER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are dog breeds",
+    "words": [
+      "BEAGLE",
+      "HUSKY"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are martial arts",
+    "words": [
+      "AIKIDO",
+      "TAEKWONDO"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are Olympic sports",
+    "words": [
+      "ROWING",
+      "SAILING"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are units of length",
+    "words": [
+      "FATHOM",
+      "LEAGUE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are units of weight",
+    "words": [
+      "POUND",
+      "KILOGRAM"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are types of cloud",
+    "words": [
+      "STRATUS",
+      "NIMBUS"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are knots",
+    "words": [
+      "GRANNY",
+      "TRUCKER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are punctuation marks",
+    "words": [
+      "HYPHEN",
+      "BRACKET"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are keyboard keys",
+    "words": [
+      "DELETE",
+      "ESCAPE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are constellations",
+    "words": [
+      "PEGASUS",
+      "PHOENIX"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are moons of Jupiter",
+    "words": [
+      "CALLISTO",
+      "GANYMEDE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are birthstones",
+    "words": [
+      "AMETHYST",
+      "CITRINE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are board games",
+    "words": [
+      "SCRABBLE",
+      "MONOPOLY"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are professions",
+    "words": [
+      "CARPENTER",
+      "PLUMBER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are severe storms",
+    "words": [
+      "HURRICANE",
+      "TORNADO"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are European rivers",
+    "words": [
+      "VOLGA",
+      "TIBER"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are mountain peaks",
+    "words": [
+      "EVEREST",
+      "DENALI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are musical instruments",
+    "words": [
+      "CLARINET",
+      "BASSOON"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are types of pasta",
+    "words": [
+      "FARFALLE",
+      "CAVATAPPI"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are fencing terms",
+    "words": [
+      "PARRY",
+      "LUNGE"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are surfing terms",
+    "words": [
+      "BARREL",
+      "WIPEOUT"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are baking tools",
+    "words": [
+      "ROLLER",
+      "SPATULA"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are types of tea",
+    "words": [
+      "OOLONG",
+      "MATCHA"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "theme": "Both are philosophical schools of thought",
+    "words": [
+      "STOICISM",
+      "HEDONISM"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are systems of government",
+    "words": [
+      "MONARCHY",
+      "OLIGARCHY"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are legal documents",
+    "words": [
+      "SUBPOENA",
+      "AFFIDAVIT"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are parts of the circulatory system",
+    "words": [
+      "ARTERY",
+      "CAPILLARY"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are astronomical phenomena",
+    "words": [
+      "SUPERNOVA",
+      "ASTEROID"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are geological terms",
+    "words": [
+      "SEDIMENT",
+      "IGNEOUS"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are parts of speech",
+    "words": [
+      "ADJECTIVE",
+      "PRONOUN"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are architectural features",
+    "words": [
+      "BUTTRESS",
+      "PARAPET"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are nautical terms",
+    "words": [
+      "STARBOARD",
+      "PORTHOLE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are wine terms",
+    "words": [
+      "SOMMELIER",
+      "VINEYARD"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are typography terms",
+    "words": [
+      "SERIF",
+      "LIGATURE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are severe weather events",
+    "words": [
+      "BLIZZARD",
+      "HAILSTORM"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are creatures of Greek mythology",
+    "words": [
+      "CENTAUR",
+      "MINOTAUR"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are ancient civilizations",
+    "words": [
+      "BYZANTINE",
+      "PHOENICIA"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are units of measurement",
+    "words": [
+      "DECIBEL",
+      "CANDELA"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are wind instruments",
+    "words": [
+      "BAGPIPES",
+      "ACCORDION"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are punctuation marks",
+    "words": [
+      "ELLIPSIS",
+      "ASTERISK"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are edible fungi",
+    "words": [
+      "TRUFFLE",
+      "PORCINI"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are rare gemstones",
+    "words": [
+      "TANZANITE",
+      "PERIDOT"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are luxury fabrics",
+    "words": [
+      "CASHMERE",
+      "CHIFFON"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are fishing knots",
+    "words": [
+      "TIMBER",
+      "CLINCH"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are seas",
+    "words": [
+      "ARABIAN",
+      "CARIBBEAN"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are deserts",
+    "words": [
+      "KALAHARI",
+      "ATACAMA"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are volcanic features",
+    "words": [
+      "CALDERA",
+      "OBSIDIAN"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are constellations",
+    "words": [
+      "ANDROMEDA",
+      "PERSEUS"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are chemistry terms",
+    "words": [
+      "CATALYST",
+      "ISOTOPE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are physics terms",
+    "words": [
+      "MOMENTUM",
+      "VELOCITY"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are weaving tools",
+    "words": [
+      "SHUTTLE",
+      "SPINDLE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are currencies",
+    "words": [
+      "RUPIAH",
+      "SHEKEL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are chemical elements",
+    "words": [
+      "TUNGSTEN",
+      "PLATINUM"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are literary devices",
+    "words": [
+      "METAPHOR",
+      "IRONY"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are printmaking techniques",
+    "words": [
+      "ETCHING",
+      "LINOCUT"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are parts of a ship",
+    "words": [
+      "RUDDER",
+      "BULKHEAD"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are terms in astronomy",
+    "words": [
+      "PARALLAX",
+      "ECLIPSE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are terms in genetics",
+    "words": [
+      "GENOTYPE",
+      "MUTATION"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are ballet terms",
+    "words": [
+      "ARABESQUE",
+      "PLIE"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are units of pressure",
+    "words": [
+      "PASCAL",
+      "MILLIBAR"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are terms in economics",
+    "words": [
+      "INFLATION",
+      "SURPLUS"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are parts of a flower",
+    "words": [
+      "STAMEN",
+      "PISTIL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "Both are types of eclipse",
+    "words": [
+      "ANNULAR",
+      "PARTIAL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "theme": "All three are planets",
+    "words": [
+      "MERCURY",
+      "VENUS",
+      "NEPTUNE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are chemical elements",
+    "words": [
+      "OXYGEN",
+      "CARBON",
+      "HYDROGEN"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are fruits",
+    "words": [
+      "APPLE",
+      "BANANA",
+      "ORANGE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are continents",
+    "words": [
+      "AFRICA",
+      "EUROPE",
+      "ASIA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are board games",
+    "words": [
+      "CHESS",
+      "LUDO",
+      "RISK"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are herbs",
+    "words": [
+      "BASIL",
+      "THYME",
+      "MINT"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are cheeses",
+    "words": [
+      "CHEDDAR",
+      "GOUDA",
+      "BRIE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are birds",
+    "words": [
+      "FALCON",
+      "PIGEON",
+      "ROBIN"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are fish",
+    "words": [
+      "SALMON",
+      "TROUT",
+      "BASS"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are colours",
+    "words": [
+      "SCARLET",
+      "INDIGO",
+      "AMBER"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are dances",
+    "words": [
+      "WALTZ",
+      "POLKA",
+      "RUMBA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are musical instruments",
+    "words": [
+      "FLUTE",
+      "OBOE",
+      "HARP"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are sports",
+    "words": [
+      "RUGBY",
+      "CRICKET",
+      "SOCCER"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are vegetables",
+    "words": [
+      "CARROT",
+      "POTATO",
+      "CABBAGE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are trees",
+    "words": [
+      "BIRCH",
+      "MAPLE",
+      "CEDAR"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are big cats",
+    "words": [
+      "LEOPARD",
+      "LION",
+      "CHEETAH"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are insects",
+    "words": [
+      "BEETLE",
+      "MOTH",
+      "WASP"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are reptiles",
+    "words": [
+      "SNAKE",
+      "LIZARD",
+      "GECKO"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are seas",
+    "words": [
+      "BALTIC",
+      "CORAL",
+      "ARABIAN"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are rivers",
+    "words": [
+      "THAMES",
+      "DANUBE",
+      "VOLGA"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are mountain ranges",
+    "words": [
+      "ANDES",
+      "ALPS",
+      "ROCKIES"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are deserts",
+    "words": [
+      "SAHARA",
+      "GOBI",
+      "KALAHARI"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are gemstones",
+    "words": [
+      "EMERALD",
+      "RUBY",
+      "SAPPHIRE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are metals",
+    "words": [
+      "GOLD",
+      "BRONZE",
+      "NICKEL"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are units of time",
+    "words": [
+      "MINUTE",
+      "HOUR",
+      "MONTH"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are card games",
+    "words": [
+      "WHIST",
+      "SNAP",
+      "SOLITAIRE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are constellations",
+    "words": [
+      "ORION",
+      "LYRA",
+      "PEGASUS"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are moons of Jupiter",
+    "words": [
+      "EUROPA",
+      "GANYMEDE",
+      "CALLISTO"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are weather events",
+    "words": [
+      "THUNDER",
+      "DRIZZLE",
+      "BLIZZARD"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are precipitation",
+    "words": [
+      "FROST",
+      "HAIL",
+      "SLEET"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are dog breeds",
+    "words": [
+      "POODLE",
+      "BOXER",
+      "BEAGLE"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are martial arts",
+    "words": [
+      "KARATE",
+      "JUDO",
+      "AIKIDO"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are yoga poses",
+    "words": [
+      "COBRA",
+      "TRIANGLE",
+      "LOTUS"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are knots",
+    "words": [
+      "BOWLINE",
+      "CLOVE",
+      "GRANNY"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are punctuation marks",
+    "words": [
+      "COMMA",
+      "SEMICOLON",
+      "HYPHEN"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are types of cloud",
+    "words": [
+      "CIRRUS",
+      "CUMULUS",
+      "STRATUS"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are types of hat",
+    "words": [
+      "FEDORA",
+      "BERET",
+      "TRILBY"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are cocktails",
+    "words": [
+      "MOJITO",
+      "MARTINI",
+      "DAIQUIRI"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are emotions",
+    "words": [
+      "HAPPY",
+      "ANGRY",
+      "WORRY"
+    ],
+    "difficulty": "triple"
+  },
+  {
+    "theme": "All three are Greek letters",
+    "words": [
+      "DELTA",
+      "GAMMA",
+      "THETA"
+    ],
+    "difficulty": "triple"
+  }
 ]
