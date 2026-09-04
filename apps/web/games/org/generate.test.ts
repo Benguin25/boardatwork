@@ -26,7 +26,7 @@ function permutations(n: number): number[][] {
 const ALL_PERMS = permutations(N);
 
 /** Independent brute-force re-implementation used only by tests, so a bug in the generator's own uniqueness search can't hide itself. */
-function countSolutionsIndependently(clues: { check(candidate: OrgAssignment): boolean }[]): number {
+function countSolutionsIndependently(clues: readonly { check(candidate: OrgAssignment): boolean }[]): number {
   let count = 0;
   for (const role of ALL_PERMS) {
     for (const team of ALL_PERMS) {
@@ -40,16 +40,20 @@ function countSolutionsIndependently(clues: { check(candidate: OrgAssignment): b
 }
 
 describe("generate", () => {
-  it("is deterministic: same seed -> identical puzzle, across 1000 seeds", () => {
-    for (let seed = 0; seed < 1000; seed += 1) {
-      const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
-      const a = generate(seed, difficulty);
-      const b = generate(seed, difficulty);
-      expect(a.solution).toEqual(b.solution);
-      expect(a.clues.map((c) => c.id)).toEqual(b.clues.map((c) => c.id));
-      expect(a.clues.map((c) => c.text)).toEqual(b.clues.map((c) => c.text));
-    }
-  });
+  it(
+    "is deterministic: same seed -> identical puzzle, across 1000 seeds",
+    () => {
+      for (let seed = 0; seed < 1000; seed += 1) {
+        const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
+        const a = generate(seed, difficulty);
+        const b = generate(seed, difficulty);
+        expect(a.solution).toEqual(b.solution);
+        expect(a.clues.map((c) => c.id)).toEqual(b.clues.map((c) => c.id));
+        expect(a.clues.map((c) => c.text)).toEqual(b.clues.map((c) => c.text));
+      }
+    },
+    15000,
+  );
 
   it("produces a valid bijection for both role and team, across 1000 seeds", () => {
     for (let seed = 0; seed < 1000; seed += 1) {

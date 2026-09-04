@@ -164,58 +164,76 @@ function countSolutions(clues: readonly PoolClue[]): number {
   return roleCount * teamCount;
 }
 
+const MAX_SELECT_ATTEMPTS = 2000;
+
+/** Would adding `clue` shrink the current role and/or team candidate list at all? Picking only among "useful" clues each round guarantees forward progress every round (see `selectClueSet`'s doc comment for why at least one always exists while either list has >1 entry). */
+function narrows(
+  clue: PoolClue,
+  roleList: readonly (readonly number[])[],
+  teamList: readonly (readonly number[])[],
+): boolean {
+  const roleFilter = clue.roleFilter;
+  const teamFilter = clue.teamFilter;
+  if (roleFilter && roleList.some((role) => !roleFilter(role))) {
+    return true;
+  }
+  if (teamFilter && teamList.some((team) => !teamFilter(team))) {
+    return true;
+  }
+  return false;
+}
+
 /**
- * SPEC §2.6 step 3: repeatedly sample a clue and add it, checking
- * uniqueness after each addition; stop once unique or at `MAX_CLUES`.
+ * SPEC §2.6 step 3: repeatedly sample a clue (instantiated against the true
+ * solution) and add it to a working set, checking uniqueness after each
+ * addition; stop as soon as it's unique or 7 clues have been used.
  *
- * "Sample" here is a randomised *greedy* pick — each round, the pool (in an
- * `rng`-shuffled order, so ties across otherwise-equal candidates vary by
- * seed) is scored by how far it would narrow the current role/team
- * candidate lists, and the best-scoring clue is taken. A uniform-random
- * pick (tried first) is not reliable within 7 clues here: role and team
- * are two *independent* 5-element bijections, so pinning each one by
- * elimination needs facts about 4 distinct people *per axis* — 8
- * single-axis facts in the worst case, over SPEC's budget. Greedy reliably
- * finds the compound "both" clues (and other high-information picks) that
- * let one clue count toward both axes' quota. If some pathological pool
- * still can't reach uniqueness by `MAX_CLUES`, that's a template-library
- * bug (SPEC §2.6 step 3) — guarded rather than ever shipping a non-unique
- * puzzle.
+ * Each round samples uniformly at random among clues that would actually
+ * *narrow* the current role and/or team candidate lists (`narrows`) rather
+ * than the full pool — a plain uniform pick over the whole pool wastes most
+ * of its 7-clue budget on already-implied clues far too often to reliably
+ * reach uniqueness (role and team are two *independent* 5-element
+ * bijections; single-axis facts need 4 distinct people's worth *per axis*
+ * to pin one by elimination, 8 in the worst case, over budget — the pool's
+ * compound "both" facts are what make 5-7 reachable at all, and they need
+ * to actually get sampled).
+ *
+ * This still can't get stuck early: whenever either candidate list has
+ * more than one entry, two of its members disagree on some person's
+ * role (or team) value, and the pool always contains a negative clue
+ * excluding whichever of those two values isn't the true one — so a
+ * still-useful clue always exists in the pool until both lists are down
+ * to 1. If a given shuffle nonetheless runs out its 7-clue budget first
+ * (bad luck in which useful clues got sampled early), retry with a fresh
+ * draw from the same seeded `rng` — deterministic, and cheap: `narrows`
+ * only filters <=120-item lists, no 14,400-pair scan.
  */
 function selectClueSet(pool: readonly PoolClue[], rng: Rng): PoolClue[] {
-  let roleList: readonly (readonly number[])[] = ALL_PERMS;
-  let teamList: readonly (readonly number[])[] = ALL_PERMS;
-  let remaining = rng.shuffle(pool);
-  const chosen: PoolClue[] = [];
+  for (let attempt = 0; attempt < MAX_SELECT_ATTEMPTS; attempt += 1) {
+    let roleList: readonly (readonly number[])[] = ALL_PERMS;
+    let teamList: readonly (readonly number[])[] = ALL_PERMS;
+    let remaining = pool;
+    const chosen: PoolClue[] = [];
+    let stuck = false;
 
-  while (chosen.length < MAX_CLUES) {
-    let bestIndex = -1;
-    let bestScore = Infinity;
-    let bestRoleList = roleList;
-    let bestTeamList = teamList;
-    for (let i = 0; i < remaining.length; i += 1) {
-      const clue = remaining[i] as PoolClue;
-      const rl = clue.roleFilter ? roleList.filter(clue.roleFilter) : roleList;
-      const tl = clue.teamFilter ? teamList.filter(clue.teamFilter) : teamList;
-      const score = rl.length * tl.length;
-      if (score < bestScore) {
-        bestScore = score;
-        bestIndex = i;
-        bestRoleList = rl;
-        bestTeamList = tl;
-        if (bestScore <= 1) {
-          break;
-        }
+    while (roleList.length > 1 || teamList.length > 1) {
+      if (chosen.length >= MAX_CLUES) {
+        stuck = true;
+        break;
       }
+      const useful = remaining.filter((c) => narrows(c, roleList, teamList));
+      if (useful.length === 0) {
+        stuck = true;
+        break;
+      }
+      const pick = rng.pick(useful);
+      roleList = pick.roleFilter ? roleList.filter(pick.roleFilter) : roleList;
+      teamList = pick.teamFilter ? teamList.filter(pick.teamFilter) : teamList;
+      chosen.push(pick);
+      remaining = remaining.filter((c) => c !== pick);
     }
-    if (bestIndex === -1) {
-      break;
-    }
-    chosen.push(remaining[bestIndex] as PoolClue);
-    roleList = bestRoleList;
-    teamList = bestTeamList;
-    remaining = remaining.filter((_, i) => i !== bestIndex);
-    if (bestScore === 1) {
+
+    if (!stuck) {
       return chosen;
     }
   }
