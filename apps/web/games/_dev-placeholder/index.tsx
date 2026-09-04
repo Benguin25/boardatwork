@@ -1,0 +1,294 @@
+import {
+  buildShareGrid,
+  createRng,
+  shareGridHeader,
+  shareLine,
+  type CheckResult,
+  type Difficulty,
+  type Score,
+} from "@boardatwork/game-core";
+import type { GameModule } from "../types";
+
+/**
+ * Not a shipped game — a fixture that exercises every `SkinPrimitives`
+ * component in one screen, used only by the Gate 2 skin-parity checks
+ * (`/dev/skins/[skin]`, `tests/e2e/skins.spec.ts`). Never registered in
+ * `games/registry.ts` and never linked from the home page.
+ */
+export interface PlaceholderPuzzle {
+  seed: number;
+  difficulty: Difficulty;
+}
+
+export interface PlaceholderState {
+  puzzle: PlaceholderPuzzle;
+  selectedId: string | null;
+  sliderValue: number;
+  modalOpen: boolean;
+  checksUsed: number;
+  hintsUsed: number;
+  feedback: string;
+  log: { id: string; author?: string; text: string }[];
+  logicCell: "empty" | "yes" | "no";
+  done: boolean;
+}
+
+export type PlaceholderMove =
+  | { type: "select"; id: string }
+  | { type: "set-slider"; value: number }
+  | { type: "toggle-modal" }
+  | { type: "toggle-logic-cell" };
+
+const CHECKS = 5;
+const HINTS = 3;
+
+function generate(seed: number, difficulty: Difficulty): PlaceholderPuzzle {
+  const rng = createRng(seed);
+  rng.next();
+  return { seed, difficulty };
+}
+
+function init(puzzle: PlaceholderPuzzle): PlaceholderState {
+  return {
+    puzzle,
+    selectedId: null,
+    sliderValue: 50,
+    modalOpen: false,
+    checksUsed: 0,
+    hintsUsed: 0,
+    feedback: "",
+    log: [],
+    logicCell: "empty",
+    done: false,
+  };
+}
+
+function reduce(state: PlaceholderState, move: PlaceholderMove): PlaceholderState {
+  switch (move.type) {
+    case "select":
+      return { ...state, selectedId: move.id };
+    case "set-slider":
+      return { ...state, sliderValue: move.value };
+    case "toggle-modal":
+      return { ...state, modalOpen: !state.modalOpen };
+    case "toggle-logic-cell": {
+      const next: Record<PlaceholderState["logicCell"], PlaceholderState["logicCell"]> = {
+        empty: "yes",
+        yes: "no",
+        no: "empty",
+      };
+      return { ...state, logicCell: next[state.logicCell] };
+    }
+    default:
+      return state;
+  }
+}
+
+function check(state: PlaceholderState): { state: PlaceholderState; result: CheckResult } {
+  const checksUsed = state.checksUsed + 1;
+  const done = checksUsed >= CHECKS;
+  const result: CheckResult = { correctCount: checksUsed, totalCount: CHECKS, done };
+  return {
+    state: {
+      ...state,
+      checksUsed,
+      done,
+      feedback: `Check ${String(checksUsed)}/${String(CHECKS)} complete.`,
+      log: [...state.log, { id: `check-${String(checksUsed)}`, author: "Reviewer", text: `Check ${String(checksUsed)} complete.` }],
+    },
+    result,
+  };
+}
+
+function hint(state: PlaceholderState): PlaceholderState {
+  if (state.hintsUsed >= HINTS) {
+    return state;
+  }
+  const hintsUsed = state.hintsUsed + 1;
+  return {
+    ...state,
+    hintsUsed,
+    log: [...state.log, { id: `hint-${String(hintsUsed)}`, author: "Reviewer", text: "Here's a hint." }],
+  };
+}
+
+function isDone(state: PlaceholderState): boolean {
+  return state.done;
+}
+
+function score(state: PlaceholderState): Score {
+  return {
+    points: state.done ? CHECKS - state.checksUsed + 1 : 0,
+    maxPoints: CHECKS,
+    checksUsed: state.checksUsed,
+    hintsUsed: state.hintsUsed,
+    won: state.done,
+  };
+}
+
+function shareGrid(state: PlaceholderState): string {
+  const header = shareGridHeader("Placeholder", "0000-00-00", state.checksUsed, CHECKS);
+  const lines = [shareLine(["🟩", "🟩", "⬛"])];
+  return buildShareGrid(header, lines);
+}
+
+export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, PlaceholderMove> = {
+  id: "braid",
+  meta: { name: "Placeholder", tagline: "Skin smoke test", checks: CHECKS, hints: HINTS },
+  homeSkin: "play",
+  generate,
+  init,
+  reduce,
+  check,
+  hint,
+  isDone,
+  score,
+  shareGrid,
+  render(state, dispatch, skin) {
+    const {
+      TextRun,
+      TileRow,
+      Slots,
+      Grid,
+      Passage,
+      Passes,
+      Actions,
+      Feedback,
+      Log,
+      Modal,
+      Slider,
+      LogicGrid,
+    } = skin;
+    return (
+      <div className="flex flex-col gap-6">
+        <section aria-label="Text run demo">
+          <TextRun
+            items={[
+              { id: "a", text: "B", groupId: "g1", state: state.selectedId === "a" ? "selected" : "default" },
+              { id: "b", text: "R", groupId: "g2" },
+              { id: "c", text: "A", groupId: "g1" },
+              { id: "d", text: "I", groupId: "g2", state: "locked" },
+              { id: "e", text: "D", groupId: "g1", state: "wrong" },
+            ]}
+            groupTokens={{ g1: "--accent-a", g2: "--accent-b" }}
+            onSelect={(id) => {
+              dispatch({ type: "select", id });
+            }}
+          />
+        </section>
+        <section aria-label="Tile row demo">
+          <TileRow
+            rows={[
+              {
+                id: "row1",
+                label: "Strand A",
+                items: [
+                  { id: "r1a", text: "B", state: "correct" },
+                  { id: "r1b", text: "A" },
+                  { id: "r1c", text: "D" },
+                ],
+              },
+              {
+                id: "row2",
+                label: "Strand B",
+                items: [
+                  { id: "r2a", text: "R" },
+                  { id: "r2b", text: "I" },
+                ],
+              },
+            ]}
+          />
+        </section>
+        <section aria-label="Slots demo">
+          <Slots
+            slots={[
+              { id: "s1", value: "X", state: "correct" },
+              { id: "s2", value: null, placeholder: "_" },
+            ]}
+            onSelect={(id) => {
+              dispatch({ type: "select", id });
+            }}
+          />
+        </section>
+        <section aria-label="Grid demo">
+          <Grid
+            rows={2}
+            cols={2}
+            cells={[
+              { id: "g1", value: "12" },
+              { id: "g2", value: "7", state: "wrong" },
+              { id: "g3", value: "3" },
+              { id: "g4", value: "9" },
+            ]}
+            rowTotals={[19, 12]}
+            colTotals={[15, 16]}
+            onSelect={(id) => {
+              dispatch({ type: "select", id });
+            }}
+          />
+        </section>
+        <section aria-label="Passage demo">
+          <Passage
+            words={[
+              { id: "w1", text: "The" },
+              { id: "w2", text: "cot" },
+              { id: "w3", text: "sat", state: "wrong" },
+              { id: "w4", text: "quietly" },
+            ]}
+            onSelect={(id) => {
+              dispatch({ type: "select", id });
+            }}
+          />
+        </section>
+        <Passes label="Checks" used={state.checksUsed} total={CHECKS} />
+        <Passes label="Hints" used={state.hintsUsed} total={HINTS} />
+        <section aria-label="Slider demo">
+          <Slider
+            label="Estimate"
+            min={0}
+            max={100}
+            value={state.sliderValue}
+            unit="%"
+            onChange={(value) => {
+              dispatch({ type: "set-slider", value });
+            }}
+          />
+        </section>
+        <section aria-label="Logic grid demo">
+          <LogicGrid
+            rowLabels={[{ id: "priya", label: "Priya" }]}
+            colLabels={[{ id: "design", label: "Design" }]}
+            cells={[{ rowId: "priya", colId: "design", state: state.logicCell }]}
+            onSelect={() => {
+              dispatch({ type: "toggle-logic-cell" });
+            }}
+          />
+        </section>
+        <Actions
+          actions={[
+            { id: "check", label: "Check", onClick: () => undefined, disabled: true },
+            {
+              id: "modal",
+              label: "How to play",
+              variant: "secondary",
+              onClick: () => {
+                dispatch({ type: "toggle-modal" });
+              },
+            },
+          ]}
+        />
+        <Feedback message={state.feedback || "Ready."} tone={state.done ? "success" : "neutral"} />
+        <Log entries={state.log} />
+        <Modal
+          open={state.modalOpen}
+          title="How to play"
+          onClose={() => {
+            dispatch({ type: "toggle-modal" });
+          }}
+        >
+          <p>This fixture exercises every skin primitive for Gate 2.</p>
+        </Modal>
+      </div>
+    );
+  },
+};

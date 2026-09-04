@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ShellProvider } from "@/components/shell/ShellProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({
 }): React.ReactElement {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ShellProvider>{children}</ShellProvider>
+      </body>
     </html>
   );
 }
