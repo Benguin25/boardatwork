@@ -56,6 +56,34 @@ describe("orgGame.render (via Play skin)", () => {
     expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
   });
 
+  it("dispatches a hint move when Hint is clicked", () => {
+    const puzzle = orgGame.generate(2, "medium");
+    const state = orgGame.init(puzzle);
+    const dispatch = vi.fn();
+
+    rtlRender(<>{orgGame.render(state, dispatch, playSkin)}</>);
+    screen.getByRole("button", { name: /^Hint/ }).click();
+
+    expect(dispatch).toHaveBeenCalledWith({ type: "hint" });
+  });
+
+  it("dispatches a check move when Check is clicked and the grid is full", () => {
+    const puzzle = orgGame.generate(2, "medium");
+    let state = orgGame.init(puzzle);
+    // Fill the grid (values don't need to be correct — Check just needs to be enabled).
+    for (let p = 0; p < puzzle.people.length; p += 1) {
+      state = orgGame.reduce(state, { type: "mark", person: p, col: p });
+      state = orgGame.reduce(state, { type: "mark", person: p, col: 5 + p });
+    }
+    const dispatch = vi.fn();
+    rtlRender(<>{orgGame.render(state, dispatch, playSkin)}</>);
+    const checkButton = screen.getByRole("button", { name: "Check" });
+    expect(checkButton).not.toBeDisabled();
+    checkButton.click();
+
+    expect(dispatch).toHaveBeenCalledWith({ type: "check" });
+  });
+
   it("shows a yes glyph for a marked cell", () => {
     const puzzle = orgGame.generate(2, "medium");
     let state = orgGame.init(puzzle);

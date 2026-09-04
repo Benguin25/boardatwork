@@ -245,9 +245,6 @@ function pruneClueSet(clues: readonly PoolClue[]): PoolClue[] {
   while (changed && current.length > MIN_CLUES) {
     changed = false;
     for (let i = 0; i < current.length; i += 1) {
-      if (current.length <= MIN_CLUES) {
-        break;
-      }
       const trial = current.filter((_, idx) => idx !== i);
       if (countSolutions(trial) === 1) {
         current = trial;
