@@ -21,6 +21,9 @@
   --danger: #c5221f;
 
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  /* Google's chrome leaves line-height at the browser default; Tailwind's
+     preflight sets 1.5. The page body sets its own 1.55 explicitly. */
+  line-height: normal;
   color: var(--ink);
   background: var(--canvas);
 }

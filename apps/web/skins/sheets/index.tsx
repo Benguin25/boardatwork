@@ -164,6 +164,7 @@ function Chrome({
 }: ChromeProps): React.ReactElement {
   return (
     <div data-testid="chrome-sheets" className="skin-sheets flex min-h-screen flex-col">
+      <header>
       <TopBar
         onTitleClick={onTitleClick}
         nav={nav}
@@ -172,6 +173,7 @@ function Chrome({
       />
       <div
         aria-hidden="true"
+        data-testid="sheets-toolbar"
         className="flex items-center gap-3 border-b border-[var(--line)] px-3 py-1 text-[13px] text-[var(--muted)]"
       >
         <span>↶</span>
@@ -184,9 +186,10 @@ function Chrome({
       </div>
       <FormulaBar />
       <ColumnHeaders />
-      <div className="flex flex-1">
+      </header>
+      <main className="flex flex-1">
         <RowGutter />
-        <main style={GRID_BACKGROUND} className="min-w-0 flex-1 px-6 py-5">
+        <div style={GRID_BACKGROUND} className="min-w-0 flex-1 px-6 py-5">
           <div className="max-w-[760px] bg-[var(--paper)]/90 p-4 outline outline-2 outline-[#1a73e8]">
             <p className="mb-1 text-[11px] uppercase tracking-wide text-[var(--muted)]">
               {[meta, subtitle].filter(Boolean).join(" · ")}
@@ -198,9 +201,11 @@ function Chrome({
             )}
             {children}
           </div>
-        </main>
-      </div>
-      <SheetTabs />
+        </div>
+      </main>
+      <footer>
+        <SheetTabs />
+      </footer>
     </div>
   );
 }
@@ -208,6 +213,7 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-sheets" className="skin-sheets flex min-h-screen flex-col">
+      <header>
       <div className="flex items-start gap-3 border-b border-[var(--line)] px-4 py-2">
         <Icon className="h-9 w-9 flex-none" />
         <div className="min-w-0 flex-1">
@@ -231,7 +237,8 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
       </div>
       <FormulaBar />
       <ColumnHeaders />
-      <div className="flex flex-1">
+      </header>
+      <main className="flex flex-1">
         <RowGutter />
         <div style={GRID_BACKGROUND} className="min-w-0 flex-1 px-6 py-5 text-[13px]">
           <table className="border-collapse bg-white text-left">
@@ -255,8 +262,10 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
           </table>
           <p className="mt-4 text-[var(--muted)]">Click the file name to return.</p>
         </div>
-      </div>
-      <SheetTabs />
+      </main>
+      <footer>
+        <SheetTabs />
+      </footer>
     </div>
   );
 }

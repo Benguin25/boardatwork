@@ -92,7 +92,8 @@ function Chrome({
 
   return (
     <div data-testid="chrome-docs" className="skin-docs min-h-screen">
-      <div className="flex items-start gap-3 px-4 pt-2">
+      <header>
+      <div className="flex items-center gap-3 px-4 pt-2">
         <Icon className="h-10 w-10 flex-none" />
         <div className="min-w-0 flex-1">
           <h1>
@@ -105,7 +106,7 @@ function Chrome({
               {DOC_TITLE}
             </button>
           </h1>
-          <div aria-hidden="true" className="mt-0.5 flex gap-0.5" data-testid="docs-menus">
+          <div aria-hidden="true" className="mt-[6px] flex gap-0.5" data-testid="docs-menus">
             {MENUS.map((menu) => (
               <span key={menu} className="rounded px-[7px] py-0.5 text-[14px] hover:bg-[#e9eef6]">
                 {menu}
@@ -123,7 +124,7 @@ function Chrome({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#001D35" aria-hidden="true">
               <path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5zm0 12c4.4 0 8 2 8 4.5V20H4v-1.5C4 16 7.6 14 12 14z" />
             </svg>
-            {share?.label ?? "Share"}
+            Share
           </button>
           <SkinMenu
             triggerLabel="Account and settings"
@@ -156,11 +157,18 @@ function Chrome({
           <i className="px-1">I</i>
           <u className="px-1">U</u>
         </span>
+        <span className="flex-none rounded px-2 py-1">
+          A
+          <span className="ml-0.5 inline-block h-[3px] w-3.5 border border-[#8a8a8a] bg-[#fff2a8] align-[-3px]" />
+        </span>
+        <span className="mx-1.5 h-5 w-px flex-none bg-[#c7ccd3]" />
+        <span className="flex-none rounded px-2 py-1">☰ ▾</span>
         <span className="ml-auto flex-none rounded px-2 py-1">✎ Editing ▾</span>
       </div>
+      </header>
 
       <div className="flex flex-wrap justify-center gap-4 px-4 pb-20 pt-5">
-        <div className="doc-page min-h-[900px] w-[816px] max-w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-24 py-[88px] text-[11pt] leading-[1.55] max-[640px]:min-h-0 max-[640px]:px-[22px] max-[640px]:py-10">
+        <main className="doc-page min-h-[900px] w-[816px] max-w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-24 py-[88px] text-[11pt] leading-[1.55] max-[640px]:min-h-0 max-[640px]:px-[22px] max-[640px]:py-10">
           <h2 className="mb-1 text-[20pt] font-normal">{DOC_TITLE}</h2>
           <div className="mb-[22px] text-[var(--muted)]">
             {[meta, subtitle].filter(Boolean).join(" · ")}
@@ -175,9 +183,12 @@ function Chrome({
               Click the document title to blur into notes. Esc returns to the game.
             </p>
           </Section>
-        </div>
+        </main>
 
-        <div className="flex w-[300px] max-w-full flex-none flex-col gap-3 pt-[88px] max-[1180px]:w-[816px] max-[1180px]:pt-0">
+        <aside
+          aria-label="Comments"
+          className="flex w-[300px] max-w-full flex-none flex-col gap-3 pt-[88px] max-[1180px]:w-[816px] max-[1180px]:pt-0"
+        >
           {notice !== undefined && (
             <div className="rounded-lg border border-[var(--line)] bg-[var(--paper)] p-3 text-[13px] shadow-sm">
               <div className="mb-1.5 flex items-center gap-2">
@@ -213,26 +224,22 @@ function Chrome({
             </div>
             <div ref={setActionsEl} className="mt-2.5 flex flex-wrap gap-0.5" />
           </div>
-        </div>
+        </aside>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 flex justify-between border-t border-[var(--line)] bg-[var(--paper)] px-4 py-1.5 text-[12px] text-[var(--muted)]">
+      <footer className="fixed inset-x-0 bottom-0 flex justify-between border-t border-[var(--line)] bg-[var(--paper)] px-4 py-1.5 text-[12px] text-[var(--muted)]">
         <span>Page 1 of 1</span>
         <span>Last edit was seconds ago</span>
-      </div>
+      </footer>
     </div>
   );
 }
 
-function Prompt({ headline, tone, note }: PromptProps): React.ReactElement {
+function Prompt({ headline, note }: PromptProps): React.ReactElement {
   return (
     <Section label="Reference string">
       <p className="mb-2">
-        {tone === "pending" ? (
-          <em className="text-[var(--muted)]">{headline}</em>
-        ) : (
-          <span>{headline}</span>
-        )}
+        <span>{headline}</span>
         {note !== undefined && <em className="ml-2 text-[var(--muted)]">{note}</em>}
       </p>
     </Section>
@@ -698,7 +705,7 @@ function LogicGrid({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-docs" className="skin-docs min-h-screen">
-      <div className="flex items-start gap-3 px-4 pt-2">
+      <header className="flex items-center gap-3 px-4 pt-2">
         <Icon className="h-10 w-10 flex-none" />
         <div className="min-w-0 flex-1">
           <h1>
@@ -710,7 +717,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
               {DOC_TITLE}
             </button>
           </h1>
-          <div aria-hidden="true" className="mt-0.5 flex gap-0.5">
+          <div aria-hidden="true" className="mt-[6px] flex gap-0.5">
             {MENUS.map((menu) => (
               <span key={menu} className="rounded px-[7px] py-0.5 text-[14px]">
                 {menu}
@@ -718,9 +725,9 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
             ))}
           </div>
         </div>
-      </div>
+      </header>
       <div className="flex justify-center px-4 pb-20 pt-5">
-        <div className="min-h-[900px] w-[816px] max-w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-24 py-[88px] text-[11pt] leading-[1.55] max-[640px]:min-h-0 max-[640px]:px-[22px] max-[640px]:py-10">
+        <main className="min-h-[900px] w-[816px] max-w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-24 py-[88px] text-[11pt] leading-[1.55] max-[640px]:min-h-0 max-[640px]:px-[22px] max-[640px]:py-10">
           <h2 className="mb-1 text-[20pt] font-normal">{DOC_TITLE}</h2>
           <div className="mb-[22px] text-[var(--muted)]">Recurring · Owner: platform team</div>
           <h3 className="mb-2 mt-[22px] text-[14pt] font-normal">1. Status</h3>
@@ -751,7 +758,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
           <p className="mt-[30px] text-[10pt] text-[var(--muted)]">
             Click the title to return.
           </p>
-        </div>
+        </main>
       </div>
     </div>
   );

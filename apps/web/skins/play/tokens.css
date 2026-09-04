@@ -24,6 +24,13 @@
   --column: 560px;
 
   font-family: "Libre Franklin", Arial, sans-serif;
+  /*
+   * The prototype leaves line-height at the browser default; Tailwind's
+   * preflight sets 1.5 on <html>. Reset it here so type sits on the same
+   * baseline grid as the reference, and set 1.3/1.5 explicitly where the
+   * prototype does.
+   */
+  line-height: normal;
   color: var(--ink);
   background: var(--paper);
 }

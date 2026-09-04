@@ -48,6 +48,7 @@ function Chrome({
 }: ChromeProps): React.ReactElement {
   return (
     <div data-testid="chrome-outlook" className="skin-outlook flex min-h-screen flex-col">
+      <header>
       <div className="flex items-center gap-3 bg-[var(--brand)] px-4 py-2 text-white">
         <Icon className="h-6 w-6 flex-none" />
         <span className="text-[15px] font-semibold">Mail</span>
@@ -70,9 +71,10 @@ function Chrome({
           <span key={item}>{item}</span>
         ))}
       </div>
+      </header>
       <div className="flex min-h-0 flex-1">
         <nav
-          aria-hidden="true"
+          aria-label="Folders"
           data-testid="outlook-folders"
           className="hidden w-[170px] flex-none border-r border-[var(--line)] bg-[var(--canvas)] px-3 py-3 text-[13px] md:block"
         >
@@ -90,10 +92,10 @@ function Chrome({
             ))}
           </ul>
         </nav>
+        <aside aria-label="Message list" className="hidden lg:block">
         <ul
-          aria-hidden="true"
           data-testid="outlook-list"
-          className="hidden w-[250px] flex-none border-r border-[var(--line)] bg-[var(--paper)] lg:block"
+          className="w-[250px] flex-none border-r border-[var(--line)] bg-[var(--paper)]"
         >
           {MESSAGES.map((message, i) => (
             <li
@@ -111,7 +113,8 @@ function Chrome({
             </li>
           ))}
         </ul>
-        <main className="min-w-0 flex-1 bg-[var(--paper)] px-6 py-5">
+        </aside>
+        <main data-testid="outlook-reading" className="min-w-0 flex-1 bg-[var(--paper)] px-6 py-5">
           <h1 className="mb-3">
             <button
               type="button"
@@ -151,12 +154,9 @@ function Chrome({
           {children}
         </main>
       </div>
-      <div
-        aria-hidden="true"
-        className="border-t border-[var(--line)] bg-[var(--canvas)] px-4 py-1 text-[12px] text-[var(--muted)]"
-      >
+      <footer className="border-t border-[var(--line)] bg-[var(--canvas)] px-4 py-1 text-[12px] text-[var(--muted)]">
         Items: 47 · Connected to Microsoft Exchange
-      </div>
+      </footer>
     </div>
   );
 }
@@ -164,13 +164,13 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-outlook" className="skin-outlook flex min-h-screen flex-col">
-      <div className="flex items-center gap-3 bg-[var(--brand)] px-4 py-2 text-white">
+      <header className="flex items-center gap-3 bg-[var(--brand)] px-4 py-2 text-white">
         <Icon className="h-6 w-6 flex-none" />
         <span className="text-[15px] font-semibold">Mail</span>
-      </div>
+      </header>
       <div className="flex min-h-0 flex-1">
         <nav
-          aria-hidden="true"
+          aria-label="Folders"
           className="hidden w-[170px] flex-none border-r border-[var(--line)] bg-[var(--canvas)] px-3 py-3 text-[13px] md:block"
         >
           <ul className="flex flex-col gap-1">

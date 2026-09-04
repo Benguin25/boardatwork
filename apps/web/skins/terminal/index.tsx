@@ -33,8 +33,9 @@ function TitleBar({
   menu?: React.ReactNode;
 }): React.ReactElement {
   return (
-    <>
+    <header>
       <div className="flex items-center gap-2 rounded-t-lg bg-[#1b201b] px-3 py-2">
+        <Icon className="h-4 w-4 flex-none" />
         <span aria-hidden="true" className="flex gap-1.5">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
@@ -65,7 +66,7 @@ function TitleBar({
           </span>
         ))}
       </div>
-    </>
+    </header>
   );
 }
 
@@ -95,7 +96,7 @@ function Chrome({
           }
         />
         <main className="bg-[var(--paper)] px-4 py-3 leading-6">
-          <p aria-hidden="true" className="text-[var(--muted)]">
+          <p aria-hidden="true" data-testid="terminal-prompt" className="text-[var(--muted)]">
             <span className="text-[var(--brand)]">{PROMPT}</span> ./reconcile --watch
           </p>
           <p aria-hidden="true" className="text-[var(--muted)]">
@@ -110,13 +111,14 @@ function Chrome({
             <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-[var(--ink)] align-middle" />
           </p>
         </main>
-        <div
+        <footer
           aria-hidden="true"
+          data-testid="terminal-status"
           className="flex justify-between border-t border-[var(--line)] bg-[#141814] px-4 py-1 text-[11px] text-[var(--muted)]"
         >
           <span>[c] check · [h] hint · [q] quit</span>
           <span>exit 0 · 0.41s</span>
-        </div>
+        </footer>
       </div>
     </div>
   );
@@ -127,7 +129,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
     <div data-testid="cover-terminal" className="skin-terminal min-h-screen p-4 text-[13px]">
       <div className="mx-auto max-w-[980px] overflow-hidden rounded-lg border border-[var(--line)]">
         <TitleBar label={WINDOW_TITLE} onTitleClick={onExit} />
-        <div className="bg-[var(--paper)] px-4 py-3 leading-6">
+        <main className="bg-[var(--paper)] px-4 py-3 leading-6">
           {[
             "npm run build",
             "> @northwind/platform@2.14.0 build",
@@ -142,7 +144,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
             </p>
           ))}
           <p className="mt-4 text-[var(--muted)]">Click the window title to return.</p>
-        </div>
+        </main>
       </div>
     </div>
   );

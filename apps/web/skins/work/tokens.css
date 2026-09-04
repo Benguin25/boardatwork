@@ -11,7 +11,8 @@
   --line: #e1e3e1;
   --paper: #ffffff;
   --canvas: #ffffff;
-  --brand: #0f9d58;
+  /* Sheets green at #0f9d58 is only 3.5:1 against white button text. */
+  --brand: #0b8043;
   --brand-ink: #ffffff;
   --accent-a: #fff2a8;
   --accent-b: #c8ebd3;
@@ -69,7 +70,8 @@
 
 .skin-jira {
   --ink: #172b4d;
-  --muted: #5e6c84;
+  /* Jira's N300 (#5e6c84) misses 4.5:1 on the #ebecf0 column background. */
+  --muted: #42526e;
   --line: #dfe1e6;
   --paper: #ffffff;
   --canvas: #f4f5f7;
@@ -114,7 +116,8 @@
   --paper: #ffffff;
   --canvas: #ffffff;
   --sidebar: #f7f6f3;
-  --brand: #2383e2;
+  /* Notion blue at #2383e2 is only 3.9:1 against white button text. */
+  --brand: #1a73c7;
   --brand-ink: #ffffff;
   --accent-a: #fbf3db;
   --accent-b: #ddedea;

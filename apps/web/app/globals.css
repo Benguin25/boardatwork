@@ -44,9 +44,16 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
-  font: inherit;
-  cursor: pointer;
+/*
+ * Layered so Tailwind utilities still win: an unlayered `font: inherit`
+ * outranks every `text-[…]` utility in v4's cascade and silently resets
+ * button type back to 16px.
+ */
+@layer base {
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

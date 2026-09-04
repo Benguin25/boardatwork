@@ -5,20 +5,24 @@ test("Esc toggles Play <-> Work mode, opening Work already covered", async ({ pa
   await expect(page.getByRole("button", { name: /Play mode/ })).toBeVisible();
 
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("button", { name: /Work mode/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Disguise:/ })).toBeVisible();
+  await expect(page.getByTestId("cover-docs")).toBeVisible();
 
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: /Play mode/ })).toBeVisible();
 });
 
-test("disguise picker changes the active skin and persists across reload", async ({ page }) => {
+test("the disguise picker changes the disguise and persists across reload", async ({ page }) => {
   await page.goto("/");
-  await page.keyboard.press("Escape"); // -> Work mode
-  await page.getByRole("button", { name: /Disguise:/ }).click();
-  await page.getByRole("button", { name: "Docs" }).click();
-  await expect(page.getByRole("button", { name: "Disguise: Docs" })).toBeVisible();
+  await page.getByRole("button", { name: /^Disguise:/ }).click();
+  await expect(page.getByTestId("disguise-picker")).toBeVisible();
+  await page.getByRole("button", { name: "Slack", exact: true }).click();
+
+  // Picking a disguise also enters Work mode, which opens covered.
+  await expect(page.getByTestId("cover-slack")).toBeVisible();
 
   await page.reload();
-  await expect(page.getByRole("button", { name: "Disguise: Docs" })).toBeVisible();
+  await expect(page.getByTestId("cover-slack")).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Disguise: Slack" })).toBeVisible();
 });

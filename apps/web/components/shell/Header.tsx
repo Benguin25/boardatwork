@@ -1,17 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useShellStore } from "@/lib/shell-store";
 import { disguiseRegistry } from "@/skins/registry";
 import { DisguisePicker } from "./DisguisePicker";
 
 /**
- * The shell header. It carries the "Board at Work" wordmark, the disguise
- * picker (in both modes) and the mode toggle — so it belongs to the home
- * page, not to a game page, where the skin's own chrome is the header
- * (the Play skin shows the game's wordmark, a Work skin shows the app it
- * is imitating).
+ * The shell header: the "Board at Work" wordmark, the disguise picker (in
+ * both modes) and the mode toggle. It belongs to the home page — on a game
+ * page the skin's own chrome is the header, showing the game's wordmark in
+ * Play mode and the app it is imitating in Work mode.
  */
 export function Header(): React.ReactElement {
   const mode = useShellStore((s) => s.mode);
@@ -20,14 +18,9 @@ export function Header(): React.ReactElement {
   const [pickerOpen, setPickerOpen] = useState(false);
 
   return (
-    <nav
-      aria-label="Board at Work controls"
-      className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]"
-    >
-      <Link href="/" className="text-[26px] font-black leading-none tracking-[-0.02em]">
-        Board at Work
-      </Link>
-      <div className="flex items-center gap-[6px]">
+    <header className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
+      <h1 className="text-[26px] font-black tracking-[-0.02em]">Board at Work</h1>
+      <nav aria-label="Board at Work controls" className="flex gap-[6px]">
         <button
           type="button"
           onClick={() => {
@@ -45,7 +38,7 @@ export function Header(): React.ReactElement {
         >
           {mode === "play" ? "Play" : "Work"} mode (Esc)
         </button>
-      </div>
+      </nav>
       {pickerOpen && (
         <DisguisePicker
           onClose={() => {
@@ -53,6 +46,6 @@ export function Header(): React.ReactElement {
           }}
         />
       )}
-    </nav>
+    </header>
   );
 }

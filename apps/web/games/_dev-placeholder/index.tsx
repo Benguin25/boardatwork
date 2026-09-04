@@ -287,7 +287,7 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
             { id: "check", label: "Check", onClick: () => undefined, disabled: true },
             {
               id: "modal",
-              label: "How to play",
+              label: "Open modal",
               variant: "secondary",
               onClick: () => {
                 dispatch({ type: "toggle-modal" });

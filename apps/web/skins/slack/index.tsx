@@ -46,11 +46,13 @@ function Sidebar({
   onExitMode: (() => void) | undefined;
 }): React.ReactElement {
   return (
-    <aside
+    <nav
+      aria-label="Channels and direct messages"
       data-testid="slack-sidebar"
       className="hidden w-[240px] flex-none flex-col bg-[var(--sidebar)] px-2 pb-4 pt-3 text-[15px] text-[var(--sidebar-ink)] md:flex"
     >
       <div className="mb-3 flex items-center gap-2 px-2">
+        <Icon className="h-6 w-6 flex-none rounded" />
         <span className="flex-1 truncate text-[17px] font-black text-white">{WORKSPACE}</span>
         <SkinMenu
           triggerLabel="Workspace settings"
@@ -96,7 +98,7 @@ function Sidebar({
           </li>
         ))}
       </ul>
-    </aside>
+    </nav>
   );
 }
 
@@ -140,7 +142,7 @@ function Chrome({
                 {notice}
               </p>
             )}
-            <div className="flex gap-3">
+            <div data-testid="slack-message" className="flex gap-3">
               <span
                 aria-hidden="true"
                 className="h-9 w-9 flex-none rounded bg-[#e8912d] text-center text-[15px] font-bold leading-9 text-white"
@@ -158,6 +160,7 @@ function Chrome({
             </div>
             <div
               aria-hidden="true"
+              data-testid="slack-composer"
               className="mt-6 flex items-center justify-between rounded-lg border border-[var(--line)] px-3 py-2 text-[15px] text-[var(--muted)]"
             >
               <span>Message #{CHANNEL}</span>
@@ -165,6 +168,7 @@ function Chrome({
             </div>
           </main>
           <aside
+            aria-label="Thread"
             data-testid="slack-thread"
             className="w-[320px] max-w-full flex-none border-l border-[var(--line)] px-4 py-4"
           >
@@ -197,8 +201,14 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-slack" className="skin-slack flex min-h-screen">
-      <aside className="hidden w-[240px] flex-none flex-col bg-[var(--sidebar)] px-2 pb-4 pt-3 text-[15px] text-[var(--sidebar-ink)] md:flex">
-        <span className="mb-4 px-2 text-[17px] font-black text-white">{WORKSPACE}</span>
+      <nav
+        aria-label="Channels"
+        className="hidden w-[240px] flex-none flex-col bg-[var(--sidebar)] px-2 pb-4 pt-3 text-[15px] text-[var(--sidebar-ink)] md:flex"
+      >
+        <span className="mb-4 flex items-center gap-2 px-2 text-[17px] font-black text-white">
+          <Icon className="h-6 w-6 flex-none rounded" />
+          {WORKSPACE}
+        </span>
         <ul>
           {CHANNELS.map((channel) => (
             <li key={channel} className="truncate rounded px-2 py-1">
@@ -209,7 +219,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
             </li>
           ))}
         </ul>
-      </aside>
+      </nav>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-b border-[var(--line)] px-5 py-3">
           <h1>

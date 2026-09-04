@@ -28,7 +28,7 @@ function Icon({ className }: { className?: string }): React.ReactElement {
 function Filmstrip(): React.ReactElement {
   return (
     <aside
-      aria-hidden="true"
+      aria-label="Slides"
       data-testid="slides-filmstrip"
       className="hidden w-[168px] flex-none border-r border-[var(--line)] bg-[var(--paper)] px-2 py-3 md:block"
     >
@@ -62,7 +62,7 @@ function Chrome({
 }: ChromeProps): React.ReactElement {
   return (
     <div data-testid="chrome-slides" className="skin-slides flex min-h-screen flex-col">
-      <div className="flex items-start gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
+      <header className="flex items-start gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
         <Icon className="h-9 w-9 flex-none" />
         <div className="min-w-0 flex-1">
           <h1>
@@ -96,11 +96,11 @@ function Chrome({
             items={chromeMenuItems(nav, onChangeDisguise, onExitMode)}
           />
         </div>
-      </div>
+      </header>
       <div className="flex min-h-0 flex-1">
         <Filmstrip />
-        <div className="flex min-w-0 flex-1 flex-col px-6 py-5">
-          <main className="mx-auto w-full max-w-[860px] flex-1 rounded-sm border border-[var(--line)] bg-[var(--paper)] px-12 py-10 shadow-sm">
+        <main className="flex min-w-0 flex-1 flex-col px-6 py-5">
+          <div className="mx-auto w-full max-w-[860px] flex-1 rounded-sm border border-[var(--line)] bg-[var(--paper)] px-12 py-10 shadow-sm">
             <h2 className="mb-1 text-[30px] font-light">Reconciliation</h2>
             <p className="mb-6 text-[13px] text-[var(--muted)]">
               {[meta, subtitle].filter(Boolean).join(" · ")}
@@ -111,16 +111,23 @@ function Chrome({
               </p>
             )}
             {children}
-          </main>
-          <div className="mx-auto mt-3 w-full max-w-[860px] rounded-sm border border-[var(--line)] bg-[var(--paper)] px-4 py-2 text-[13px] text-[var(--muted)]">
+          </div>
+          <div
+            data-testid="slides-notes"
+            className="mx-auto mt-3 w-full max-w-[860px] rounded-sm border border-[var(--line)] bg-[var(--paper)] px-4 py-2 text-[13px] text-[var(--muted)]"
+          >
             Click to add speaker notes
           </div>
-          <p aria-hidden="true" className="mt-2 text-[12px] text-[var(--muted)]">
+          <p
+            aria-hidden="true"
+            data-testid="slides-counter"
+            className="mt-2 text-[12px] text-[var(--muted)]"
+          >
             {CURRENT} of {THUMBS.length}
           </p>
-        </div>
+        </main>
         <aside
-          aria-hidden="true"
+          aria-label="Theme and transition"
           className="hidden w-[180px] flex-none border-l border-[var(--line)] bg-[var(--paper)] px-3 py-4 text-[13px] text-[var(--muted)] lg:block"
         >
           <p className="mb-2 font-semibold text-[var(--ink)]">Themes</p>
@@ -136,7 +143,7 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-slides" className="skin-slides flex min-h-screen flex-col">
-      <div className="flex items-start gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
+      <header className="flex items-start gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
         <Icon className="h-9 w-9 flex-none" />
         <div className="min-w-0 flex-1">
           <h1>
@@ -156,10 +163,10 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
             ))}
           </div>
         </div>
-      </div>
+      </header>
       <div className="flex min-h-0 flex-1">
         <Filmstrip />
-        <div className="flex min-w-0 flex-1 flex-col px-6 py-5">
+        <main className="flex min-w-0 flex-1 flex-col px-6 py-5">
           <div className="mx-auto w-full max-w-[860px] flex-1 rounded-sm border border-[var(--line)] bg-[var(--paper)] px-12 py-10 shadow-sm">
             <h2 className="mb-6 text-[30px] font-light">Where we are</h2>
             <ul className="list-disc pl-6 text-[18px] leading-relaxed">
@@ -171,7 +178,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
               Click the deck name to return.
             </p>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

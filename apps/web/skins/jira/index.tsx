@@ -102,7 +102,7 @@ function Chrome({
 
   return (
     <div data-testid="chrome-jira" className="skin-jira flex min-h-screen flex-col">
-      <div className="flex items-center gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
+      <header className="flex items-center gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
         <Icon className="h-6 w-6 flex-none" />
         <span aria-hidden="true" className="text-[13px] text-[var(--muted)]">
           Platform / Board
@@ -115,6 +115,7 @@ function Chrome({
         </span>
         <span
           aria-hidden="true"
+          data-testid="jira-create"
           className="rounded bg-[var(--brand)] px-3 py-1 text-[13px] font-semibold text-[var(--brand-ink)]"
         >
           Create
@@ -125,10 +126,10 @@ function Chrome({
           trigger={<span aria-hidden="true">Z</span>}
           items={chromeMenuItems(nav, onChangeDisguise, onExitMode)}
         />
-      </div>
+      </header>
       <div className="flex min-h-0 flex-1">
         <nav
-          aria-hidden="true"
+          aria-label="Project"
           data-testid="jira-sidebar"
           className="hidden w-[180px] flex-none border-r border-[var(--line)] bg-[var(--paper)] px-3 py-4 text-[13px] md:block"
         >
@@ -146,7 +147,7 @@ function Chrome({
             ))}
           </ul>
         </nav>
-        <div className="min-w-0 flex-1 px-4 py-4">
+        <main className="min-w-0 flex-1 px-4 py-4">
           <h1 className="mb-3 flex items-center gap-3">
             <button
               type="button"
@@ -168,7 +169,7 @@ function Chrome({
           </h1>
           <Board />
           <div className="mt-4 flex flex-wrap gap-4">
-            <main className="min-w-0 flex-1 rounded border border-[var(--line)] bg-[var(--paper)] p-4">
+            <div className="min-w-0 flex-1 rounded border border-[var(--line)] bg-[var(--paper)] p-4">
               <p className="mb-1 text-[12px] font-semibold text-[var(--muted)]">
                 {ISSUE_KEY} · {[meta, subtitle].filter(Boolean).join(" · ")}
               </p>
@@ -178,8 +179,9 @@ function Chrome({
                 </p>
               )}
               <RailContext.Provider value={slots}>{children}</RailContext.Provider>
-            </main>
+            </div>
             <aside
+              aria-label="Issue detail"
               data-testid="jira-detail"
               className="w-[280px] max-w-full flex-none rounded border border-[var(--line)] bg-[var(--paper)] p-4 text-[13px]"
             >
@@ -197,7 +199,7 @@ function Chrome({
               <div ref={setActionsEl} className="mt-2 flex flex-wrap gap-2" />
             </aside>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
@@ -206,13 +208,13 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-jira" className="skin-jira flex min-h-screen flex-col">
-      <div className="flex items-center gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
+      <header className="flex items-center gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 py-2">
         <Icon className="h-6 w-6 flex-none" />
         <span aria-hidden="true" className="text-[13px] text-[var(--muted)]">
           Platform / Board
         </span>
-      </div>
-      <div className="flex-1 px-4 py-4">
+      </header>
+      <main className="flex-1 px-4 py-4">
         <h1 className="mb-3">
           <button
             type="button"
@@ -224,7 +226,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
         </h1>
         <Board />
         <p className="mt-6 text-[13px] text-[var(--muted)]">Click the board name to return.</p>
-      </div>
+      </main>
     </div>
   );
 }

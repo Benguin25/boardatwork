@@ -43,11 +43,13 @@ function Sidebar({
   onExitMode: (() => void) | undefined;
 }): React.ReactElement {
   return (
-    <aside
+    <nav
+      aria-label="Pages"
       data-testid="notion-sidebar"
       className="hidden w-[230px] flex-none flex-col bg-[var(--sidebar)] px-2 py-3 text-[14px] md:flex"
     >
       <div className="mb-3 flex items-center gap-2 px-2">
+        <Icon className="h-4 w-4 flex-none" />
         <span className="flex-1 truncate font-semibold">Northwind wiki</span>
         <SkinMenu
           triggerLabel="Workspace settings"
@@ -85,7 +87,7 @@ function Sidebar({
       >
         + New page
       </button>
-    </aside>
+    </nav>
   );
 }
 
@@ -103,18 +105,18 @@ function Chrome({
     <div data-testid="chrome-notion" className="skin-notion flex min-h-screen">
       <Sidebar nav={nav} onChangeDisguise={onChangeDisguise} onExitMode={onExitMode} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-center gap-3 px-6 py-2 text-[13px] text-[var(--muted)]">
+        <header className="flex items-center gap-3 px-6 py-2 text-[13px] text-[var(--muted)]">
           <span aria-hidden="true">Northwind wiki / {PAGE_TITLE}</span>
           <span aria-hidden="true" className="ml-auto" data-testid="notion-meta">
             Share · Comments · Updates · ☆ · …
           </span>
-        </div>
+        </header>
         <div aria-hidden="true" className="h-[100px] bg-[var(--accent-a)]" />
         <main className="mx-auto w-full max-w-[720px] px-6 pb-16">
           <p aria-hidden="true" className="-mt-8 mb-2 text-[52px] leading-none">
             {PAGE_EMOJI}
           </p>
-          <h1 className="mb-1">
+          <h1 className="mb-1" data-testid="notion-title">
             <button
               type="button"
               onClick={onTitleClick}
@@ -126,7 +128,10 @@ function Chrome({
           <p className="mb-6 text-[13px] text-[var(--muted)]">
             {[meta, subtitle].filter(Boolean).join(" · ")}
           </p>
-          <div className="mb-6 flex gap-3 rounded-md bg-[var(--accent-c)] px-4 py-3 text-[15px]">
+          <div
+            data-testid="notion-callout"
+            className="mb-6 flex gap-3 rounded-md bg-[var(--accent-c)] px-4 py-3 text-[15px]"
+          >
             <span aria-hidden="true">💡</span>
             <p>{notice ?? "Reviewed weekly. Blocks below are filled in during the pass."}</p>
           </div>
@@ -140,8 +145,14 @@ function Chrome({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-notion" className="skin-notion flex min-h-screen">
-      <aside className="hidden w-[230px] flex-none flex-col bg-[var(--sidebar)] px-2 py-3 text-[14px] md:flex">
-        <span className="mb-3 px-2 font-semibold">Northwind wiki</span>
+      <nav
+        aria-label="Pages"
+        className="hidden w-[230px] flex-none flex-col bg-[var(--sidebar)] px-2 py-3 text-[14px] md:flex"
+      >
+        <span className="mb-3 flex items-center gap-2 px-2 font-semibold">
+          <Icon className="h-4 w-4 flex-none" />
+          Northwind wiki
+        </span>
         <ul>
           {TREE.map((page) => (
             <li key={page.name} className="truncate rounded px-2 py-1">
@@ -150,7 +161,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
             </li>
           ))}
         </ul>
-      </aside>
+      </nav>
       <div className="flex min-w-0 flex-1 flex-col">
         <div aria-hidden="true" className="h-[100px] bg-[var(--accent-a)]" />
         <main className="mx-auto w-full max-w-[720px] px-6 pb-16 text-[16px] leading-[1.65]">

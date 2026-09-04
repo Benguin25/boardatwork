@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import type {
   ActionsProps,
@@ -52,17 +53,30 @@ function Chrome({
   title,
   subtitle,
   meta,
+  notice,
   nav,
+  onTitleClick,
   onChangeDisguise,
   children,
 }: ChromeProps): React.ReactElement {
   return (
     <div data-testid="chrome-play" className="skin-play min-h-screen">
-      <div className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
-        <h1 className="text-[26px] font-black leading-none tracking-[-0.02em]">
-          {title}
+      <header className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
+        <h1 className="text-[26px] font-black tracking-[-0.02em]">
+          {/* Play mode never covers, so the wordmark is plain text there;
+              the `/dev/skins` harness passes a handler to exercise Cover. */}
+          {onTitleClick ? (
+            <button type="button" onClick={onTitleClick}>
+              {title}
+            </button>
+          ) : (
+            title
+          )}
           {subtitle !== undefined && (
-            <small className="ml-[10px] text-[13px] font-normal tracking-normal text-[var(--muted)]">
+            <small
+              data-testid="play-subtitle"
+              className="ml-[10px] text-[13px] font-normal tracking-normal text-[var(--muted)]"
+            >
               {subtitle}
             </small>
           )}
@@ -79,13 +93,25 @@ function Chrome({
             </button>
           ))}
         </nav>
-      </div>
+      </header>
       <main className="mx-auto max-w-[var(--column)] px-[18px] pb-20 pt-7 text-center">
         {meta !== undefined && (
-          <div className="mb-[10px] text-[14px] text-[var(--muted)]">{meta}</div>
+          <div data-testid="play-date" className="mb-[10px] text-[14px] text-[var(--muted)]">
+            {meta}
+          </div>
+        )}
+        {notice !== undefined && (
+          <p className="mb-[16px] border-y border-[var(--line)] py-2 text-[15px]">{notice}</p>
         )}
         {children}
         <div className="mt-10 text-center text-[13px] text-[var(--muted)]">
+          <Link
+            href="/"
+            className="text-[13px] text-[var(--muted)] underline underline-offset-[3px]"
+          >
+            Board at Work
+          </Link>{" "}
+          ·{" "}
           <button
             type="button"
             onClick={onChangeDisguise}
@@ -103,7 +129,7 @@ function Chrome({
 function Prompt({ headline, tone, note }: PromptProps): React.ReactElement {
   const pending = tone === "pending";
   return (
-    <>
+    <div data-testid="play-prompt">
       <p
         className={
           pending
@@ -116,7 +142,7 @@ function Prompt({ headline, tone, note }: PromptProps): React.ReactElement {
       {note !== undefined && (
         <p className="mb-[22px] text-[14px] text-[var(--muted)]">{note}</p>
       )}
-    </>
+    </div>
   );
 }
 
@@ -161,7 +187,7 @@ function TextRun({
 
 function Slots({ rows, groupTokens }: SlotsProps): React.ReactElement {
   return (
-    <div className="mb-[28px] flex flex-col items-center gap-3">
+    <div data-testid="play-strands" className="mb-[28px] flex flex-col items-center gap-3">
       {rows.map((row) => {
         const token = tokenFor(row.groupId, groupTokens, true);
         return (
@@ -180,9 +206,10 @@ function Slots({ rows, groupTokens }: SlotsProps): React.ReactElement {
                 {slot.value ?? ""}
               </span>
             ))}
-            {row.note !== undefined && (
-              <span className="ml-2 text-[13px] text-[var(--muted)]">{row.note}</span>
-            )}
+            {/* `row.note` (the "3 / 6" count) is a Work-mode affordance: the
+                reference prototype's Play strands are slots and nothing else,
+                and the filled slots already carry the count. */}
+            <span className="sr-only">{row.note}</span>
           </div>
         );
       })}
@@ -592,13 +619,13 @@ function LogicGrid({
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
     <div data-testid="cover-play" className="skin-play min-h-screen">
-      <div className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
-        <h1 className="text-[26px] font-black leading-none tracking-[-0.02em]">
+      <header className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
+        <h1 className="text-[26px] font-black tracking-[-0.02em]">
           <button type="button" onClick={onExit} className="underline-offset-4 hover:underline">
             Board at Work
           </button>
         </h1>
-      </div>
+      </header>
       <main className="mx-auto max-w-[var(--column)] px-[18px] pb-20 pt-7">
         <p className="text-[20px] font-bold">Nothing to see here.</p>
         <p className="mt-2 text-[15px] text-[var(--muted)]">
