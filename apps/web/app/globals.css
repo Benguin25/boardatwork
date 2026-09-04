@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@import "../skins/play/tokens.css";
+@import "../skins/docs/tokens.css";
+@import "../skins/work/tokens.css";
+
+/*
+ * Libre Franklin (SIL Open Font License 1.1), vendored as the variable
+ * latin subset so the Play skin renders identically offline and in CI —
+ * the reference prototype pulls the same faces from Google Fonts.
+ */
+@font-face {
+  font-family: "Libre Franklin";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url("/fonts/libre-franklin-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Libre Franklin";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: block;
+  src: url("/fonts/libre-franklin-latin-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * Layered so Tailwind utilities still win: an unlayered `font: inherit`
+ * outranks every `text-[…]` utility in v4's cascade and silently resets
+ * button type back to 16px.
+ */
+@layer base {
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

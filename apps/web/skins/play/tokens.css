@@ -1,0 +1,70 @@
+/*
+ * Play skin design tokens, extracted verbatim from
+ * `reference-braid-prototype.html` (the visual spec). Nothing in the Play
+ * skin may hard-code a colour or a size that belongs here.
+ */
+.skin-play {
+  --ink: #121212;
+  --muted: #5a5a5a;
+  --line: #dcdcdc;
+  --paper: #ffffff;
+
+  /* Strand colours and their locked (dark) variants. */
+  --accent-a: #f9df6d;
+  --accent-b: #a0c35a;
+  --accent-c: #b0c4ef;
+  --accent-a-lock: #e3b800;
+  --accent-b-lock: #5f9a1f;
+  --accent-c-lock: #4e6fcb;
+
+  --danger: #c5221f;
+  --tile: 52px;
+  --tile-radius: 6px;
+  --tile-border: 2px;
+  --column: 560px;
+
+  font-family: "Libre Franklin", Arial, sans-serif;
+  /*
+   * The prototype leaves line-height at the browser default; Tailwind's
+   * preflight sets 1.5 on <html>. Reset it here so type sits on the same
+   * baseline grid as the reference, and set 1.3/1.5 explicitly where the
+   * prototype does.
+   */
+  line-height: normal;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+@media (max-width: 640px) {
+  .skin-play {
+    --tile: 44px;
+  }
+}
+
+/* A tile on a wrong strand shakes once; motion-reduced users get a red rule. */
+@keyframes bw-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+.bw-wrong {
+  animation: bw-shake 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bw-wrong {
+    animation: none;
+    border-color: var(--danger) !important;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "boardatwork",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "start": "npm run start -w apps/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "content:check": "npm run content:check -w apps/web",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run content:check && npm run visual",
+    "e2e": "npm run e2e -w apps/web",
+    "visual": "npm run visual -w apps/web"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
