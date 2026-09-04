@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="tabtitle">Braid</title>
+<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23111'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Georgia' font-weight='700' fill='%23F9DF6D' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121212; --muted:#5A5A5A; --line:#DCDCDC; --paper:#FFFFFF;
+    --p-a:#F9DF6D; --p-b:#A0C35A; --p-c:#B0C4EF;
+    --p-a-lock:#E3B800; --p-b-lock:#5F9A1F; --p-c-lock:#4E6FCB;
+    --tile:52px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  button{font:inherit;cursor:pointer}
+  body{color:var(--ink);background:var(--paper);min-height:100vh;-webkit-tap-highlight-color:transparent}
+  #work,#play{display:none}
+  body.mode-play #play{display:block}
+  body.mode-work #work{display:block}
+
+  /* ======================================================= PLAY MODE */
+  #play{font-family:"Libre Franklin",Arial,sans-serif}
+  .p-top{border-bottom:1px solid var(--ink);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto}
+  .p-brand{font-weight:900;font-size:26px;letter-spacing:-.02em}
+  .p-brand small{font-weight:400;font-size:13px;color:var(--muted);margin-left:10px;letter-spacing:0}
+  .p-nav{display:flex;gap:6px}
+  .p-nav button{background:none;border:0;font-size:14px;font-weight:500;padding:8px 10px;border-radius:6px}
+  .p-nav button:hover{background:#F0F0F0}
+  .p-wrap{max-width:560px;margin:0 auto;padding:28px 18px 80px;text-align:center}
+  .p-date{font-size:14px;color:var(--muted);margin-bottom:10px}
+  .p-theme{font-size:20px;font-weight:700;line-height:1.3;margin-bottom:6px;min-height:26px}
+  .p-theme.hidden-theme{font-weight:400;color:var(--muted);font-style:italic;font-size:17px}
+  .p-lens{font-size:14px;color:var(--muted);margin-bottom:22px}
+  .p-rope{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:26px}
+  .p-rope .ltr{width:var(--tile);height:var(--tile);border:2px solid var(--line);border-radius:6px;background:#fff;font-weight:700;font-size:22px;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,transform .1s}
+  .p-rope .ltr:active{transform:scale(.94)}
+  .p-rope .ltr:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .p-rope .ltr.a{background:var(--p-a);border-color:var(--p-a)}
+  .p-rope .ltr.b{background:var(--p-b);border-color:var(--p-b)}
+  .p-rope .ltr.c{background:var(--p-c);border-color:var(--p-c)}
+  .p-rope .ltr.locked.a{background:var(--p-a-lock);border-color:var(--p-a-lock);color:#fff}
+  .p-rope .ltr.locked.b{background:var(--p-b-lock);border-color:var(--p-b-lock);color:#fff}
+  .p-rope .ltr.locked.c{background:var(--p-c-lock);border-color:var(--p-c-lock);color:#fff}
+  .p-rope .ltr.locked{cursor:default}
+  .p-rope .ltr.wrong{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+  @media (prefers-reduced-motion:reduce){.p-rope .ltr.wrong{animation:none;border-color:#C5221F}}
+  .p-strands{display:flex;flex-direction:column;gap:12px;align-items:center;margin-bottom:28px}
+  .p-strand{display:flex;gap:5px;align-items:flex-end}
+  .p-strand .slot{width:30px;height:36px;border-bottom:3px solid var(--line);font-weight:700;font-size:22px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px}
+  .p-strand.a .slot{border-color:var(--p-a-lock)} .p-strand.b .slot{border-color:var(--p-b-lock)} .p-strand.c .slot{border-color:var(--p-c-lock)}
+  .p-passes{display:flex;gap:8px;justify-content:center;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+  .pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)} .pip.used{background:var(--ink)}
+  .p-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .pill{border-radius:999px;padding:14px 26px;font-size:16px;font-weight:600;border:1px solid var(--ink);background:#fff;color:var(--ink)}
+  .pill.solid{background:var(--ink);color:#fff}
+  .pill:disabled{opacity:.35;cursor:not-allowed}
+  .pill:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .p-msg{margin-top:18px;min-height:24px;font-size:16px;color:var(--ink)}
+  .p-foot{text-align:center;font-size:13px;color:var(--muted);margin-top:40px}
+  .p-foot button{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:13px}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20;font-family:"Libre Franklin",Arial,sans-serif}
+  .modal.open{display:flex}
+  .modal .card{background:#fff;border-radius:10px;width:440px;max-width:100%;padding:36px 28px 28px;position:relative;text-align:center;max-height:92vh;overflow:auto}
+  .modal .x{position:absolute;top:10px;right:10px;background:none;border:0;font-size:22px;padding:6px 10px}
+  .modal h2{font-weight:900;font-size:28px;letter-spacing:-.02em;margin-bottom:8px}
+  .modal p{color:var(--muted);line-height:1.5;margin-bottom:14px;font-size:15px}
+  .modal p.dark{color:var(--ink)}
+  .modal .stats{display:flex;justify-content:center;gap:22px;margin:16px 0 20px}
+  .modal .stat b{display:block;font-size:30px;font-weight:400}
+  .modal .stat span{font-size:12px;color:var(--muted)}
+  .modal pre{font:inherit;letter-spacing:2px;margin:10px 0 18px;white-space:pre-wrap}
+  .modal .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .modal .how{text-align:left;font-size:15px;line-height:1.55}
+  .modal .how li{margin:0 0 8px 18px}
+  .modal .how .sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+  .modal label{display:block;text-align:left;font-size:13px;color:var(--muted);margin:12px 0 4px}
+  .modal input{width:100%;font:inherit;font-size:15px;padding:12px 14px;border:1px solid #888;border-radius:6px}
+  .modal .err{color:#C5221F;font-size:13px;min-height:18px;margin-top:8px;text-align:left}
+  .modal .linkbox{display:flex;gap:8px;align-items:center;background:#F3F3F3;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:13px}
+  .modal .linkbox span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);text-align:left}
+
+  /* ======================================================= WORK MODE */
+  #work{font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;background:#F9FBFD;min-height:100vh;--hl-a:#FFF2A8;--hl-b:#C8EBD3;--hl-c:#C6E2F5;--hl-a-lock:#FFD34D;--hl-b-lock:#6DD094;--hl-c-lock:#7CC1F0;--blue:#0B57D0;--gline:#DADCE0;--gmuted:#5F6368}
+  .top{display:flex;align-items:center;gap:12px;padding:8px 16px 0}
+  .doc-icon{width:40px;height:40px;flex:none}
+  .title-wrap{flex:1;min-width:0}
+  .doc-title{font-size:18px;padding:2px 6px;border-radius:4px;display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text}
+  .doc-title:hover{outline:1px solid var(--gline)}
+  .menus{display:flex;gap:2px;margin-top:2px}
+  .menus span{font-size:14px;padding:2px 7px;border-radius:4px;cursor:default}
+  .menus span:hover{background:#E9EEF6}
+  .top-right{display:flex;align-items:center;gap:14px}
+  .share{background:#C2E7FF;color:#001D35;border:0;border-radius:999px;padding:9px 18px 9px 14px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px}
+  .avatar{width:32px;height:32px;border-radius:50%;background:#7B4FBF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;border:0}
+  .toolbar{margin:10px 16px 0;background:#EDF2FA;border-radius:999px;padding:6px 14px;display:flex;align-items:center;gap:6px;font-size:14px;overflow:hidden;white-space:nowrap}
+  .toolbar .sep{width:1px;height:20px;background:#C7CCD3;margin:0 6px;flex:none}
+  .toolbar .t{padding:4px 8px;border-radius:4px;cursor:default;flex:none}
+  .toolbar .t:hover{background:#DCE3EE}
+  .toolbar .t.mode{margin-left:auto}
+  .toolbar b,.toolbar i,.toolbar u{padding:0 4px}
+  .hl-icon{display:inline-block;width:14px;height:3px;background:#FFF2A8;border:1px solid #8a8a8a;margin-left:2px;vertical-align:-3px}
+  .stage{display:flex;justify-content:center;gap:16px;padding:20px 16px 80px}
+  .page{width:816px;max-width:100%;min-height:900px;background:#fff;border:1px solid var(--gline);border-radius:2px;padding:88px 96px;font-size:11pt;line-height:1.55}
+  .page h2{font-size:20pt;font-weight:400;margin-bottom:4px}
+  .page .meta{color:var(--gmuted);margin-bottom:22px}
+  .page h3{font-size:14pt;font-weight:400;margin:22px 0 8px}
+  .page p{margin-bottom:8px}
+  .page ul{padding-left:22px;margin-bottom:6px}
+  .page li{margin-bottom:6px}
+  .page .small{color:var(--gmuted);font-size:10pt}
+  .w-rope{font-size:16pt;letter-spacing:2px;line-height:2;margin:4px 0 6px;user-select:none}
+  .w-rope .ltr{display:inline-block;padding:0 3px;border-radius:2px;border:0;background:none;font:inherit;letter-spacing:0;line-height:1.5;color:var(--ink);min-width:24px;text-align:center}
+  .w-rope .ltr:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+  .w-rope .ltr.a{background:var(--hl-a)} .w-rope .ltr.b{background:var(--hl-b)} .w-rope .ltr.c{background:var(--hl-c)}
+  .w-rope .ltr.locked.a{background:var(--hl-a-lock)} .w-rope .ltr.locked.b{background:var(--hl-b-lock)} .w-rope .ltr.locked.c{background:var(--hl-c-lock)}
+  .w-rope .ltr.locked{font-weight:700;cursor:default}
+  .w-rope .ltr.wrong{text-decoration:underline wavy #C5221F;text-decoration-thickness:1.5px}
+  .w-strand .slot{display:inline-block;width:18px;border-bottom:1px solid #444;text-align:center;margin-right:3px;line-height:1.3;height:20px}
+  .w-strand.a .slot{background:var(--hl-a)} .w-strand.b .slot{background:var(--hl-b)} .w-strand.c .slot{background:var(--hl-c)}
+  .w-strand .count{color:var(--gmuted);font-size:9pt;margin-left:8px}
+  .theme-line em{color:var(--gmuted)}
+  .comments{width:300px;flex:none;display:flex;flex-direction:column;gap:12px;padding-top:88px}
+  .cmt{background:#fff;border:1px solid var(--gline);border-radius:8px;padding:12px 14px;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .cmt.active{border-color:#FBBC04;box-shadow:0 1px 8px rgba(0,0,0,.14)}
+  .cmt .who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .cmt .who .avatar{width:26px;height:26px;font-size:12px}
+  .cmt .who .name{font-weight:500}
+  .cmt .who .when{color:var(--gmuted);font-size:12px;margin-left:auto}
+  .cmt .body{line-height:1.45}
+  .cmt .acts{display:flex;gap:2px;margin-top:10px;flex-wrap:wrap}
+  .cmt .acts button{background:none;border:0;color:var(--blue);font-size:13px;font-weight:500;padding:6px 10px;border-radius:999px}
+  .cmt .acts button:hover{background:#E8F0FE}
+  .cmt .acts button:disabled{color:#9AA0A6;cursor:not-allowed;background:none}
+  .cmt .acts button.solid{background:var(--blue);color:#fff}
+  .cmt .acts button.solid:disabled{background:#C7CCD3;color:#fff}
+  .cmt .pips{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+  .cmt .pip{width:8px;height:8px;border:1.5px solid var(--gmuted)} .cmt .pip.used{background:var(--gmuted)}
+  .cmt pre{font:inherit;white-space:pre-wrap;margin:6px 0 0;letter-spacing:1px}
+  body.cover #wgame,body.cover .comments{display:none}
+  #covertext{display:none}
+  body.cover #covertext{display:block}
+  .foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gline);font-size:12px;color:var(--gmuted);padding:6px 16px;display:flex;justify-content:space-between}
+  body.mode-play .foot{display:none}
+  @media (max-width:1180px){.stage{flex-wrap:wrap}.comments{width:816px;max-width:100%;padding-top:0}}
+  @media (max-width:640px){.page{padding:40px 22px;min-height:0}.menus,.toolbar{display:none}.w-rope{font-size:14pt}.w-rope .ltr{min-width:20px}:root{--tile:44px}.p-rope .ltr{font-size:19px}}
+</style>
+</head>
+<body class="mode-play">
+
+<!-- =============================================== PLAY MODE -->
+<div id="play">
+  <div class="p-top">
+    <div class="p-brand">Braid<small id="p-label"></small></div>
+    <div class="p-nav">
+      <button data-open="how">How to play</button>
+      <button data-open="stats">Stats</button>
+      <button data-open="make">Make one</button>
+    </div>
+  </div>
+  <div class="p-wrap">
+    <div class="p-date" id="p-date"></div>
+    <div class="p-theme" data-role="theme"></div>
+    <div class="p-lens" data-role="lens"></div>
+    <div class="p-rope" data-role="rope" role="group" aria-label="Braided letters"></div>
+    <div class="p-strands" data-role="strands"></div>
+    <div class="p-passes"><span>Checks</span><span data-role="pips" style="display:flex;gap:6px"></span></div>
+    <div class="p-acts">
+      <button class="pill" data-act="hint">Hint</button>
+      <button class="pill" data-act="clear">Clear</button>
+      <button class="pill solid" data-act="check">Check</button>
+    </div>
+    <div class="p-msg" data-role="msg" aria-live="polite"></div>
+    <div class="p-foot"><button data-act="work">Work mode</button> · Esc toggles between modes</div>
+  </div>
+</div>
+
+<!-- =============================================== WORK MODE -->
+<div id="work">
+  <div class="top">
+    <svg class="doc-icon" viewBox="0 0 40 40" aria-hidden="true"><path fill="#4285F4" d="M24 4H10a3 3 0 0 0-3 3v26a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3V13z"/><path fill="#A1C2FA" d="M24 4v9h9z"/><path fill="#F1F1F1" d="M13 20h14v2H13zm0 4h14v2H13zm0 4h9v2h-9z"/></svg>
+    <div class="title-wrap">
+      <div class="doc-title" id="doctitle" tabindex="0" title="Click to blur into notes">Weekly sync — action items</div>
+      <div class="menus"><span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span><span>Tools</span><span>Extensions</span><span>Help</span></div>
+    </div>
+    <div class="top-right">
+      <button class="share" data-open="make"><svg width="18" height="18" viewBox="0 0 24 24" fill="#001D35"><path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5zm0 12c4.4 0 8 2 8 4.5V20H4v-1.5C4 16 7.6 14 12 14z"/></svg>Share</button>
+      <button class="avatar" data-act="play" title="Back to play mode">Z</button>
+    </div>
+  </div>
+  <div class="toolbar">
+    <span class="t">↶</span><span class="t">↷</span><span class="t">🖨</span><span class="sep"></span>
+    <span class="t">100% ▾</span><span class="sep"></span><span class="t">Normal text ▾</span><span class="sep"></span>
+    <span class="t">Arial ▾</span><span class="sep"></span><span class="t">− 11 +</span><span class="sep"></span>
+    <span class="t"><b>B</b><i>I</i><u>U</u></span><span class="t">A<span class="hl-icon"></span></span><span class="sep"></span><span class="t">☰ ▾</span>
+    <span class="t mode">✎ Editing ▾</span>
+  </div>
+  <div class="stage">
+    <div class="page">
+      <div id="wgame">
+        <h2>Weekly sync — action items</h2>
+        <div class="meta" id="w-meta"></div>
+        <h3>1. Reference string</h3>
+        <p class="theme-line"><span data-role="theme"></span> <em data-role="lens"></em></p>
+        <div class="w-rope" data-role="rope" role="group" aria-label="Braided letters"></div>
+        <p class="small">Highlight each character to assign it to a stream. Order is preserved within a stream.</p>
+        <h3>2. Streams</h3>
+        <ul data-role="strands"></ul>
+        <h3>3. Notes</h3>
+        <p>Two items were merged into the reference string above; each keeps its own character order. Separate them. Each review pass reports how many characters are misassigned and confirms one of them. Context for the items is released after the second pass. Five passes per cycle.</p>
+        <p class="small">Click the document title to blur into notes. Esc returns to the game.</p>
+      </div>
+      <div id="covertext">
+        <h2>Weekly sync — action items</h2>
+        <div class="meta">Recurring · Owner: platform team</div>
+        <h3>1. Status</h3>
+        <ul><li>Q3 roadmap review moved to Thursday; deck still needs the updated retention slide.</li><li>Vendor renewal is out for legal review, expected back end of week.</li><li>Onboarding doc rewrite is 70% done; remaining sections are billing and permissions.</li></ul>
+        <h3>2. Decisions</h3>
+        <ul><li>Keep the current sprint length; revisit in October.</li><li>Consolidate the two status channels into one.</li></ul>
+        <h3>3. Follow-ups</h3>
+        <ul><li>Circulate revised timeline before Friday.</li><li>Confirm headcount ask with finance.</li><li>Draft FAQ for the support team.</li></ul>
+        <p class="small" style="margin-top:30px">Click the title to return.</p>
+      </div>
+    </div>
+    <div class="comments" id="comments"></div>
+  </div>
+  <div class="foot"><span id="footl"></span><span>Last edit was seconds ago</span></div>
+</div>
+
+<!-- =============================================== MODALS -->
+<div class="modal" id="m-how"><div class="card"><button class="x" data-close>×</button>
+  <h2>How to play</h2>
+  <div class="how">
+    <p class="dark">Two words were braided into one string. Each word keeps its own letter order. Pull them apart.</p>
+    <ul>
+      <li>Tap a letter to colour it <span class="sw" style="background:var(--p-a)"></span>or <span class="sw" style="background:var(--p-b)"></span>. Tap again to change.</li>
+      <li>Fill both words, then Check. You'll learn how many letters are on the wrong strand, and one of them locks into place.</li>
+      <li>The theme is hidden until your second check.</li>
+      <li>Stuck? Hint reveals the theme early, then locks a letter for you. Three hints, and they show on your result.</li>
+      <li>Five checks. A new braid every day.</li>
+    </ul>
+  </div>
+</div></div>
+
+<div class="modal" id="m-stats"><div class="card"><button class="x" data-close>×</button>
+  <h2 id="r-title">Statistics</h2>
+  <p id="r-body"></p>
+  <div class="stats" id="r-stats"></div>
+  <pre id="r-share"></pre>
+  <div class="row" id="r-row"></div>
+</div></div>
+
+<div class="modal" id="m-make"><div class="card"><button class="x" data-close>×</button>
+  <h2>Make a braid</h2>
+  <p>Pick two or three words and a theme. You'll get a link that opens the puzzle for anyone.</p>
+  <label for="f-name">Your name</label><input id="f-name" placeholder="Zach">
+  <label for="f-words">Words, comma separated</label><input id="f-words" placeholder="LISBON, BERLIN">
+  <label for="f-theme">Theme (revealed after their second check)</label><input id="f-theme" placeholder="Both are capital cities">
+  <div class="err" id="f-err"></div>
+  <div class="linkbox" id="f-linkbox" style="display:none"><span id="f-link"></span><button class="pill" id="f-copy" style="padding:8px 16px;font-size:13px">Copy</button></div>
+  <div class="row" style="margin-top:16px"><button class="pill solid" id="f-make">Get link</button></div>
+</div></div>
+
+<script>
+const PUZZLES = [
+  { theme:"Both are capital cities",     words:["LISBON","BERLIN"] },
+  { theme:"Both are planets",            words:["SATURN","URANUS"] },
+  { theme:"Both are colours",            words:["ORANGE","MAROON"] },
+  { theme:"Both are animals",            words:["BADGER","FERRET"] },
+  { theme:"Both are found in a kitchen", words:["GRATER","TOASTER"] },
+  { theme:"Both are instruments",        words:["TRUMPET","GUITAR"] },
+  { theme:"Both are weather",            words:["THUNDER","DRIZZLE"] },
+  { theme:"Both are organs",             words:["KIDNEY","SPLEEN"] },
+  { theme:"All three are feelings",      words:["SORROW","TERROR","WONDER"] },
+  { theme:"All three are trees",         words:["WILLOW","POPLAR","SPRUCE"] },
+];
+const MAX = 5, THEME_AT = 2, MAX_HINTS = 3, KEYS = ["a","b","c"];
+const EPOCH = 20690; // day index of Braid #0
+const $ = id => document.getElementById(id);
+const all = sel => [...document.querySelectorAll(sel)];
+
+function rng(seed){ let s = seed*2654435761 >>> 0; return ()=>{ s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; return s/4294967296; }; }
+function braid(words, seed){
+  const r = rng(seed+1), ptr = words.map(()=>0), out = [];
+  const total = words.reduce((n,w)=>n+w.length,0);
+  while (out.length < total){
+    let live = words.map((w,i)=>ptr[i]<w.length?i:-1).filter(i=>i>=0);
+    const n = out.length;
+    if (n>=2 && out[n-1].src===out[n-2].src && live.length>1) live = live.filter(i=>i!==out[n-1].src);
+    const weights = live.map(i=>words[i].length-ptr[i]);
+    let pick = r()*weights.reduce((a,b)=>a+b,0), idx = live[0];
+    for (let k=0;k<live.length;k++){ pick-=weights[k]; if(pick<=0){idx=live[k];break;} }
+    out.push({ch:words[idx][ptr[idx]], src:idx}); ptr[idx]++;
+  }
+  return out;
+}
+function permutations(n){ if(n===1) return [[0]]; const out=[]; permutations(n-1).forEach(p=>{ for(let i=0;i<=p.length;i++) out.push([...p.slice(0,i),n-1,...p.slice(i)]); }); return out; }
+const enc = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/=+$/,"");
+const dec = s => JSON.parse(decodeURIComponent(escape(atob(s))));
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dayIndex = Math.floor(Date.now()/864e5);
+const store = { get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch{} } };
+
+// ---------------- state
+let puzzle, label, seed, letters, assign, locked, tries, done, win, history, hints, themeShown, sender=null, isDaily=false, dailyNo=0;
+
+function loadDaily(offset=0){
+  const i = dayIndex + offset;
+  puzzle = PUZZLES[((i % PUZZLES.length)+PUZZLES.length)%PUZZLES.length];
+  isDaily = offset===0; dailyNo = i-EPOCH; seed = i; sender = null;
+  label = isDaily ? `#${dailyNo}` : `practice`;
+  start();
+}
+function loadFromHash(){
+  try{
+    const h = new URLSearchParams(location.hash.slice(1)).get("b"); if(!h) return false;
+    const o = dec(h); puzzle = { words:o.w, theme:o.t }; seed = o.s ?? 1; sender = o; isDaily=false;
+    label = `from ${o.by||"a friend"}`; start(); return true;
+  }catch{ return false; }
+}
+function start(){
+  letters = braid(puzzle.words, seed);
+  assign = letters.map(()=>-1); locked = letters.map(()=>false);
+  tries = 0; done = false; win = false; history = []; hints = 0; themeShown = false;
+  const dateStr = new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+  $("p-label").textContent = label; $("p-date").textContent = dateStr;
+  $("w-meta").textContent = `${dateStr} · Braid ${label}`;
+  $("footl").textContent = `${letters.length} characters · ${puzzle.words.length} streams`;
+  message("");
+}
+
+// ---------------- rendering (both skins)
+function message(msg){ all('[data-role="msg"]').forEach(el=>el.textContent = msg); renderComments(msg); render(); }
+
+function render(){
+  const themeOpen = themeShown || tries>=THEME_AT || done;
+  const lens = puzzle.words.map(w=>w.length).join(" and ") + " letters";
+  all('[data-role="theme"]').forEach(el=>{ el.textContent = themeOpen ? puzzle.theme : `Theme revealed after check ${THEME_AT}`; el.classList.toggle("hidden-theme", !themeOpen); });
+  all('[data-role="lens"]').forEach(el=>el.textContent = lens);
+
+  all('[data-role="rope"]').forEach(rope=>{
+    rope.innerHTML = "";
+    letters.forEach((l,i)=>{
+      const t = document.createElement("button");
+      t.className = "ltr" + (assign[i]>=0?" "+KEYS[assign[i]]:"") + (locked[i]?" locked":"");
+      t.textContent = l.ch; t.disabled = locked[i] || done; t.dataset.i = i;
+      t.setAttribute("aria-label", `${l.ch}, ${assign[i]<0?"unassigned":"strand "+(assign[i]+1)}`);
+      t.onclick = ()=>{ assign[i] = (assign[i]+2) % (puzzle.words.length+1) - 1; render(); };
+      rope.appendChild(t);
+    });
+  });
+  all('[data-role="strands"]').forEach(st=>{
+    const isList = st.tagName==="UL"; st.innerHTML = "";
+    puzzle.words.forEach((w,k)=>{
+      const got = letters.filter((l,i)=>assign[i]===k).map(l=>l.ch);
+      const row = document.createElement(isList?"li":"div"); row.className = (isList?"w-strand ":"p-strand ")+KEYS[k];
+      row.innerHTML = w.split("").map((_,j)=>`<span class="slot">${got[j]||""}</span>`).join("") + (isList?`<span class="count">${got.length} / ${w.length}</span>`:"");
+      st.appendChild(row);
+    });
+  });
+  const pips = Array.from({length:MAX},(_,i)=>`<span class="pip${i<tries?" used":""}"></span>`).join("");
+  all('[data-role="pips"]').forEach(el=>el.innerHTML = pips);
+
+  const counts = puzzle.words.map((w,k)=>assign.filter(a=>a===k).length);
+  const full = assign.every(a=>a>=0) && counts.every((c,k)=>c===puzzle.words[k].length);
+  all('[data-act="check"]').forEach(b=>b.disabled = !full || done);
+  all('[data-act="clear"]').forEach(b=>b.disabled = done);
+  all('[data-act="hint"]').forEach(b=>{ b.disabled = done || hints>=MAX_HINTS; b.textContent = hints>=MAX_HINTS ? "No hints left" : `Hint${hints?` (${MAX_HINTS-hints} left)`:""}`; });
+}
+
+function renderComments(msg){
+  const pips = Array.from({length:MAX},(_,i)=>`<span class="pip${i<tries?" used":""}"></span>`).join("");
+  let html = "";
+  if (sender){
+    html += `<div class="cmt"><div class="who"><span class="avatar" style="background:#188038">${esc((sender.by||"?")[0].toUpperCase())}</span><span class="name">${esc(sender.by||"A friend")}</span><span class="when">shared</span></div>
+      <div class="body">${sender.r ? `Cleared this in ${esc(String(sender.r))} of ${MAX}. Your turn.` : "Sent you this one."}</div></div>`;
+  }
+  html += `<div class="cmt active"><div class="who"><span class="avatar" style="background:#E37400">R</span><span class="name">Reviewer</span><span class="when">now</span></div>
+    <div class="body">${esc(msg) || "Assign every character, then request a pass."}<br><span style="color:var(--gmuted)">Passes</span><span class="pips">${pips}</span></div>
+    <div class="acts"><button class="solid" data-act="check">Run pass</button><button data-act="clear">Clear</button><button data-act="hint">Hint</button></div></div>`;
+  if (done){
+    html += `<div class="cmt"><div class="who"><span class="avatar" style="background:#E37400">R</span><span class="name">Reviewer</span><span class="when">resolved</span></div>
+      <div class="body">${win ? "Cleared." : "Not cleared."} ${esc(puzzle.words.join(" and "))}.<pre>${esc(shareText())}</pre></div>
+      <div class="acts"><button data-act="copyres">Copy result</button><button data-act="sendres">Copy challenge link</button><button data-act="practice">Another one</button></div></div>`;
+  }
+  $("comments").innerHTML = html;
+  bindActs();
+}
+
+// ---------------- actions
+function check(){
+  let best = null, bestHits = -1;
+  permutations(puzzle.words.length).forEach(perm=>{
+    const hits = letters.reduce((n,l,i)=>n+(perm[assign[i]]===l.src?1:0),0);
+    if (hits>bestHits){ bestHits=hits; best=perm; }
+  });
+  assign = assign.map(a=>best[a]);
+  const wrongIdx = letters.map((l,i)=>assign[i]===l.src?-1:i).filter(i=>i>=0);
+  tries++;
+  history.push(wrongIdx.length===0 ? "🟩" : "🟥".repeat(Math.min(wrongIdx.length,10)));
+  if (wrongIdx.length===0 || tries>=MAX){ finish(wrongIdx.length===0); return; }
+  const pin = wrongIdx[Math.floor(wrongIdx.length/2)];
+  assign[pin] = letters[pin].src; locked[pin] = true;
+  message(`${wrongIdx.length} letter${wrongIdx.length>1?"s are":" is"} on the wrong strand. One locked in.` + (tries===THEME_AT ? " Theme revealed." : ""));
+  all(".ltr").forEach(t=>{ const i=+t.dataset.i; if(wrongIdx.includes(i) && i!==pin){ t.classList.add("wrong"); setTimeout(()=>t.classList.remove("wrong"),1400); } });
+}
+function hint(){
+  if (done || hints>=MAX_HINTS) return;
+  hints++;
+  if (!themeShown && tries<THEME_AT){ themeShown = true; message("Theme revealed."); return; }
+  const open = letters.map((l,i)=>locked[i]?-1:i).filter(i=>i>=0);
+  if (open.length<=1){ hints--; message("Nothing left to hint."); return; }
+  // pick the open letter closest to the middle of the string, then alternate outward
+  open.sort((x,y)=>Math.abs(x-letters.length/2)-Math.abs(y-letters.length/2));
+  const i = open[hints-1 < open.length ? (hints-1)%open.length : 0];
+  assign[i] = letters[i].src; locked[i] = true;
+  message(`Locked in the ${letters[i].ch}.`);
+}
+function clearBoard(){ assign = assign.map((a,i)=>locked[i]?a:-1); render(); }
+function finish(w){
+  done = true; win = w;
+  if (isDaily) recordStats(w);
+  message("");
+  openResult();
+}
+function shareText(){
+  return `Braid ${label} ${win?tries:"X"}/${MAX}${hints?" "+"💡".repeat(hints):""}\n${history.join("\n")}`;
+}
+function challengeLink(){ return location.origin+location.pathname+"#b="+enc({ w:puzzle.words, t:puzzle.theme, s:seed, by:myName(), r: done?(win?tries:"X"):undefined }); }
+
+// ---------------- stats (daily only)
+function recordStats(w){
+  const s = store.get("braid-stats") || { played:0, won:0, streak:0, best:0, last:null };
+  if (s.last===dailyNo) return;
+  s.played++; if (w){ s.won++; s.streak = (s.last===dailyNo-1) ? s.streak+1 : 1; s.best = Math.max(s.best,s.streak); } else s.streak = 0;
+  s.last = dailyNo; store.set("braid-stats", s);
+}
+function openResult(){
+  const s = store.get("braid-stats") || { played:0, won:0, streak:0, best:0 };
+  $("r-title").textContent = done ? (win ? ["Unbraided in one.","Unbraided in two.","Unbraided in three.","Unbraided in four.","Unbraided, just in time."][tries-1] : "Still tangled.") : "Statistics";
+  $("r-body").textContent = done ? (win ? `${puzzle.words.join(" and ")}.` : `It was ${puzzle.words.join(" and ")}.`) : "";
+  $("r-stats").innerHTML = [["Played",s.played],["Win %",s.played?Math.round(100*s.won/s.played):0],["Streak",s.streak],["Best",s.best]].map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join("");
+  $("r-share").textContent = done ? shareText() : "";
+  $("r-row").innerHTML = done ? `<button class="pill solid" data-act="copyres">Share result</button><button class="pill" data-act="sendres">Challenge link</button><button class="pill" data-act="practice">Play another</button>` : `<button class="pill" data-act="practice">Play a practice braid</button>`;
+  bindActs(); openModal("stats");
+}
+
+// ---------------- modes & modals
+function setMode(m){
+  document.body.classList.remove("mode-play","mode-work","cover");
+  document.body.classList.add("mode-"+m);
+  document.title = m==="work" ? "Weekly sync — action items - Google Docs" : "Braid";
+  $("favicon").href = m==="work"
+    ? "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234285F4' d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath fill='%23A1C2FA' d='M14 2v6h6z'/%3E%3C/svg%3E"
+    : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23111'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Georgia' font-weight='700' fill='%23F9DF6D' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E";
+  store.set("braid-mode", m);
+}
+function openModal(id){ $("m-"+id).classList.add("open"); }
+function closeModals(){ all(".modal").forEach(m=>m.classList.remove("open")); }
+function myName(){ return ($("f-name").value||"").trim() || "A friend"; }
+async function copy(text, btn){ const old = btn.textContent; try{ await navigator.clipboard.writeText(text); btn.textContent="Copied"; }catch{ btn.textContent="Copy failed"; } setTimeout(()=>btn.textContent=old,1600); }
+
+function bindActs(){
+  all('[data-act="check"]').forEach(b=>b.onclick = check);
+  all('[data-act="clear"]').forEach(b=>b.onclick = clearBoard);
+  all('[data-act="hint"]').forEach(b=>b.onclick = hint);
+  all('[data-act="copyres"]').forEach(b=>b.onclick = ()=>copy(shareText(), b));
+  all('[data-act="sendres"]').forEach(b=>b.onclick = ()=>copy(challengeLink(), b));
+  all('[data-act="practice"]').forEach(b=>b.onclick = ()=>{ closeModals(); history.replaceState(null,"",location.pathname); loadDaily(1+Math.floor(Math.random()*1000)); });
+  all('[data-act="work"]').forEach(b=>b.onclick = ()=>setMode("work"));
+  all('[data-act="play"]').forEach(b=>b.onclick = ()=>setMode("play"));
+  all('[data-open]').forEach(b=>b.onclick = ()=>{ closeModals(); if(b.dataset.open==="stats"){ if(done) openResult(); else openResult(); } else openModal(b.dataset.open); });
+  all('[data-close]').forEach(b=>b.onclick = closeModals);
+}
+all(".modal").forEach(m=>m.onclick = e=>{ if(e.target===m) closeModals(); });
+$("doctitle").onclick = ()=>document.body.classList.toggle("cover");
+document.addEventListener("keydown", e=>{
+  if (e.key!=="Escape") return;
+  if (all(".modal.open").length){ closeModals(); return; }
+  if (document.body.classList.contains("mode-play")){ setMode("work"); document.body.classList.add("cover"); }
+  else setMode("play");
+});
+$("f-make").onclick = ()=>{
+  const words = $("f-words").value.toUpperCase().split(/[,\s]+/).map(w=>w.replace(/[^A-Z]/g,"")).filter(Boolean);
+  const theme = $("f-theme").value.trim();
+  if (words.length<2 || words.length>3) return $("f-err").textContent = "Give two or three words.";
+  if (words.some(w=>w.length<4 || w.length>9)) return $("f-err").textContent = "Words need 4 to 9 letters.";
+  if (!theme) return $("f-err").textContent = "Add a theme.";
+  $("f-err").textContent = "";
+  const link = location.origin+location.pathname+"#b="+enc({ w:words, t:theme, s:Math.floor(Math.random()*9999), by:myName() });
+  $("f-link").textContent = link; $("f-linkbox").style.display="flex";
+  $("f-copy").onclick = ()=>copy(link, $("f-copy"));
+};
+window.addEventListener("hashchange", ()=>{ if(!loadFromHash()) loadDaily(); });
+
+// ---------------- boot
+const params = new URLSearchParams(location.search);
+setMode(params.get("mode")==="work" ? "work" : (store.get("braid-mode")==="work" ? "work" : "play"));
+if (!loadFromHash()) loadDaily();
+bindActs();
+if (!store.get("braid-seen")){ openModal("how"); store.set("braid-seen", true); }
+</script>
+</body>
+</html>
