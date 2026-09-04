@@ -29,7 +29,11 @@ async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 function resultHeadline(won: boolean, checksUsed: number): string {
-  return won ? `Solved in ${String(checksUsed)}.` : "Not solved.";
+  if (!won) {
+    return "Not solved.";
+  }
+  // Forecast has no checks (SPEC §2.4), so "solved in 0" would be nonsense.
+  return checksUsed > 0 ? `Solved in ${String(checksUsed)}.` : "Done for today.";
 }
 
 /**

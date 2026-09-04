@@ -6,20 +6,29 @@ import { render } from "./GameView";
 import { shareGrid } from "./share";
 
 const help = (
-  <div className="flex flex-col gap-3 text-sm">
-    <p>
-      Five words in this passage were swapped for a real word one edit away (a single
-      letter added, removed, or changed) &mdash; <em>cat &rarr; cot</em>, <em>there &rarr; three</em>.
-      Find all five impostors.
+  <>
+    <p className="mb-3.5">
+      Five words in this passage were swapped for a real word one edit away &mdash; a
+      single letter added, removed, or changed. Find all five.
     </p>
-    <ul className="list-disc pl-5">
-      <li>Tap a word to flag it as an impostor. Tap again to unflag it.</li>
-      <li>Check tells you how many of your flags are correct, not which ones.</li>
-      <li>You win once exactly the 5 true impostors are flagged.</li>
-      <li>Stuck? Hint reveals and locks in one impostor for you. Three hints, shown on your result as 💡.</li>
-      <li>Five checks. A new passage every day.</li>
+    <ul className="mb-3.5">
+      <li className="mb-2 ml-[18px] list-disc">Tap a word to flag it. Tap again to unflag it.</li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Check tells you how many of your flags are correct, not which ones.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">You win once exactly the five impostors are flagged.</li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Stuck? Hint reveals and locks in one impostor. Three hints, shown on your result as
+        💡.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">Five checks. A new passage every day.</li>
     </ul>
-  </div>
+    <p className="text-[var(--muted)]">
+      For example, &ldquo;the team <strong>met</strong> the deadline&rdquo; may have started
+      as &ldquo;the team <strong>met</strong>&rdquo; &mdash; or as
+      &ldquo;<strong>set</strong>&rdquo;. Read for sense, not spelling.
+    </p>
+  </>
 );
 
 export const proofGame: GameModule<ProofPassage, ProofState, ProofMove> = {

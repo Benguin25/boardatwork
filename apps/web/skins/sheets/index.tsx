@@ -99,7 +99,7 @@ function ColumnHeaders(): React.ReactElement {
     <div
       aria-hidden="true"
       data-testid="sheets-columns"
-      className="flex border-b border-[var(--line)] bg-[#f8f9fa] text-center text-[11px] text-[var(--muted)]"
+      className="flex overflow-hidden border-b border-[var(--line)] bg-[#f8f9fa] text-center text-[11px] text-[var(--muted)]"
     >
       <span className="w-10 flex-none border-r border-[var(--line)]" />
       {COLUMNS.map((col) => (

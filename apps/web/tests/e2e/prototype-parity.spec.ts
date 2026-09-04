@@ -15,7 +15,6 @@ import { enterWorkMode } from "./helpers/app";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const referenceDir = path.resolve(here, "../../../../docs/design/reference");
-const currentDir = path.resolve(here, "../../../../docs/design/current");
 
 /**
  * 2025-09-10T12:00Z lands on the prototype's SATURN / URANUS entry: two
@@ -119,8 +118,6 @@ for (const [name, viewport] of [
     await openApp(page);
     const appShot = await page.screenshot();
     const appMasks = await rectsFor(page, APP_CONTENT);
-    await mkdir(currentDir, { recursive: true });
-    await writeFile(path.join(currentDir, `braid-play-${name}.png`), appShot);
 
     const percent = await diffPercent(page, prototypeShot, appShot, [
       ...prototypeMasks,
@@ -161,8 +158,6 @@ test("Docs disguise matches the prototype at 1280x800", async ({ page }) => {
   });
   const appShot = await page.screenshot();
   const appMasks = await rectsFor(page, APP_WORK_CONTENT);
-  await mkdir(currentDir, { recursive: true });
-  await writeFile(path.join(currentDir, "braid-docs-desktop.png"), appShot);
 
   const percent = await diffPercent(page, prototypeShot, appShot, [
     ...prototypeMasks,

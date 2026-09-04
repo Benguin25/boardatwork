@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Difficulty } from "@boardatwork/game-core";
 import { GRID_SIZE, dailySeed, generate, isUniqueAlteration, practiceSeed } from "./generate";
+import { BREATHE_EVERY, breathe } from "../../tests/support/breathe";
 
 const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 const K_BY_DIFFICULTY: Record<Difficulty, number> = { easy: 3, medium: 4, hard: 5 };
@@ -29,8 +30,11 @@ describe("generate", () => {
   // occupying distinct rows/columns, and brute-force-verified uniqueness.
   it(
     "is deterministic, has consistent true totals, alters exactly k distinct-row/column cells, and is uniquely solvable by brute force, across 1000 seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const k = K_BY_DIFFICULTY[difficulty];
         const puzzle = generate(seed, difficulty);
@@ -67,7 +71,10 @@ describe("generate", () => {
         expect(isUniqueAlteration(rowDefect, colDefect, puzzle.k)).toBe(true);
       }
     },
-    30_000,
+    // Brute-forcing 1,000 seeds is not a fast test. Coverage instrumentation
+    // and four cores shared with the rest of the suite put it well past the
+    // 30s this used to allow; the work itself is unchanged.
+    120_000,
   );
 
   it("respects the requested difficulty's cell count regardless of seed parity", () => {

@@ -6,19 +6,33 @@ import { render } from "./GameView";
 import { shareGrid } from "./share";
 
 const help = (
-  <div className="flex flex-col gap-3 text-sm">
-    <p>
-      A hidden rule decides which words &ldquo;fit&rdquo; and which don&rsquo;t. Three example words that fit are
+  <>
+    <p className="mb-3.5">
+      A hidden rule decides which words fit and which don&rsquo;t. Three words that fit are
       shown up front.
     </p>
-    <ul className="list-disc pl-5">
-      <li>Tap words to probe them. Each one comes back ✓ (fits) or ✗ (doesn&rsquo;t fit).</li>
-      <li>Once you&rsquo;ve made at least 5 probes, Guess the rule opens a list of 10 possible rules.</li>
-      <li>One guess only — get it right to win. Fewer probes before a correct guess scores higher.</li>
-      <li>Stuck? Hint rules out a couple of wrong options from the guess list. Three hints, shown on your result as 💡.</li>
-      <li>A new hidden rule every day.</li>
+    <ul className="mb-3.5">
+      <li className="mb-2 ml-[18px] list-disc">
+        Tap a word to probe it. Each one comes back ✓ (fits) or ✗ (doesn&rsquo;t).
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        After five probes, Guess the rule opens a list of ten candidates.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        One guess only. Fewer probes before a correct guess scores higher.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Stuck? Hint rules out a couple of wrong candidates. Three hints, shown on your
+        result as 💡.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">A new rule every day.</li>
     </ul>
-  </div>
+    <p className="text-[var(--muted)]">
+      For example, if <strong>letter</strong> and <strong>ballot</strong> fit but
+      <strong> table</strong> doesn&rsquo;t, &ldquo;contains a double letter&rdquo; is still
+      alive and &ldquo;six letters long&rdquo; is not.
+    </p>
+  </>
 );
 
 export const policyGame: GameModule<PolicyPuzzle, PolicyState, PolicyMove> = {

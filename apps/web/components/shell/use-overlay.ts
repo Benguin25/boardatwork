@@ -1,7 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useShellStore } from "@/lib/shell-store";
+
+/**
+ * A layout effect, not a plain effect: registration has to happen in the
+ * same commit that paints the overlay. With `useEffect` there is one frame
+ * where the dialog is on screen but the shell still thinks nothing is
+ * open, and an `Esc` in that frame toggles Play/Work instead of closing
+ * the dialog. Overlays never render open during SSR, so this is safe.
+ */
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * Registers an open modal/menu with the shell so the global `Esc` handler
@@ -17,11 +27,11 @@ export function useOverlay(open: boolean, onClose: () => void): void {
   const popOverlay = useShellStore((s) => s.popOverlay);
   const onCloseRef = useRef(onClose);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     onCloseRef.current = onClose;
   });
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!open) {
       return;
     }

@@ -1,10 +1,12 @@
 # Board at Work
 
 Daily puzzle games that look like work. Six original puzzles (Braid, Audit,
-Proof, Forecast, Org, Policy), a clean **Play** skin, and nine **Work**
+Proof, Forecast, Org, Policy), a clean **Play** skin, and eight **Work**
 disguises (Google Docs, Sheets, Slides, Slack, Jira, Outlook, Notion,
 Terminal) that render the exact same puzzle so it can sit on a monitor in
-an open office. See [`docs/SPEC.md`](docs/SPEC.md) for the full product
+an open office. The Play skin and the Docs disguise are built to
+[`reference-braid-prototype.html`](reference-braid-prototype.html), the
+visual spec at the repo root. See [`docs/SPEC.md`](docs/SPEC.md) for the full product
 and technical spec, and [`docs/adr/`](docs/adr) for the decisions made
 along the way.
 
@@ -18,7 +20,8 @@ See "What's deferred" below.
 3. Open [http://localhost:3000](http://localhost:3000)
 4. Play a daily puzzle in the Play skin, then press `Esc` to flip into
    Work mode (it opens already covered — click the title to reveal the
-   puzzle) and pick a disguise from the header.
+   puzzle). Change disguise from the "Work mode" control in the Play
+   footer, from any Work chrome's settings menu, or from the home header.
 5. Optional — validate everything the way CI would if this had CI:
    `npm run check && npm run e2e`
 
@@ -28,13 +31,22 @@ See "What's deferred" below.
 npm run dev             # web app (apps/web), http://localhost:3000
 npm run build            # production build
 npm run start             # serve the production build
-npm run check            # typecheck + lint + unit tests + content validation
-npm run e2e              # Playwright (all six games × all nine skins)
+npm run check            # typecheck + lint + unit tests + content validation + visual
+npm run e2e              # Playwright (all six games × all eight disguises)
+npm run visual           # Playwright screenshot baselines (game × skin × viewport)
 npm run content:check    # validate content packs (content/*.json) against their Zod schemas
 ```
 
 Each command in `check`/`e2e` can also be run per-workspace, e.g.
 `npm run test -w apps/web` or `cd apps/web && npx playwright test`.
+
+Design artefacts live in [`docs/design/`](docs/design): the disguise
+chrome checklists (`disguises.md`), the prototype captures the Play and
+Docs skins are held to (`reference/`), the current screens (`current/`),
+and the written self-critique of them (`review.md`). Visual baselines are
+committed under `apps/web/tests/e2e/visual.spec.ts-snapshots/` and are
+platform-specific (Chromium on Linux); regenerate with
+`npm run visual -- --update-snapshots` after an intentional design change.
 
 ## Repo layout
 

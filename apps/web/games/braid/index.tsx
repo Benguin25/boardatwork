@@ -8,7 +8,7 @@ import { shareGrid } from "./share";
 const swatch = (token: string): React.ReactElement => (
   <span
     aria-hidden="true"
-    className="mr-1 inline-block h-3.5 w-3.5 rounded-[3px] align-[-2px]"
+    className="inline-block h-3.5 w-3.5 rounded-[3px] align-[-2px]"
     style={{ background: `var(${token})` }}
   />
 );

@@ -136,7 +136,7 @@ function shareGrid(state: PlaceholderState): string {
 export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, PlaceholderMove> = {
   id: "braid",
   meta: { name: "Placeholder", tagline: "Skin smoke test", checks: CHECKS, hints: HINTS },
-  homeSkin: "play",
+  homeSkin: "docs",
   help: <p>This fixture exercises every skin primitive for Gate 2.</p>,
   dailySeed: (dateKey) => hashSeed("braid", dateKey),
   practiceSeed: (counter) => hashSeed("braid", "practice", counter),

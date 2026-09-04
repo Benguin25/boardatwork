@@ -6,15 +6,31 @@ import { render } from "./GameView";
 import { shareGrid } from "./share";
 
 const help = (
-  <div className="flex flex-col gap-3 text-sm">
-    <p>Five people, five roles, five teams — one true org chart. Work it out from the policy notes below the grid.</p>
-    <ul className="list-disc pl-5">
-      <li>Tap a cell to cycle it empty → yes → no → empty. Marking a cell yes sets the rest of that person&rsquo;s role (or team) columns to no automatically.</li>
-      <li>Give every person one yes among the roles and one yes among the teams, then Check. You&rsquo;ll learn how many of the 10 role/team facts are correct — not which.</li>
-      <li>Five checks. Stuck? Hint fills in one person&rsquo;s role or team correctly and locks it. Three hints, shown on your result as 💡.</li>
-      <li>A new org chart every day.</li>
+  <>
+    <p className="mb-3.5">
+      Five people, five roles, five teams &mdash; one true org chart. Work it out from the
+      notes above the grid.
+    </p>
+    <ul className="mb-3.5">
+      <li className="mb-2 ml-[18px] list-disc">
+        Tap a cell to cycle it empty &rarr; ✓ &rarr; ✗ &rarr; empty. Marking a cell ✓ sets
+        the rest of that person&rsquo;s role (or team) columns to ✗ for you.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Give every person one ✓ among the roles and one ✓ among the teams, then Check.
+        You&rsquo;ll learn how many of the ten facts are right &mdash; not which.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Stuck? Hint fills in one person&rsquo;s role or team correctly and locks it. Three
+        hints, shown on your result as 💡.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">Five checks. A new chart every day.</li>
     </ul>
-  </div>
+    <p className="text-[var(--muted)]">
+      For example, &ldquo;Priya does not sit in Payments&rdquo; is an ✗ in one cell; the four
+      other teams in her row stay open until something rules them out too.
+    </p>
+  </>
 );
 
 export const orgGame: GameModule<OrgPuzzle, OrgState, OrgMove> = {

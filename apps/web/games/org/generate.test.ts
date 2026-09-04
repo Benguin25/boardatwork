@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { Difficulty } from "@boardatwork/game-core";
 import { dailySeed, generate, practiceSeed, type OrgAssignment } from "./generate";
+import { BREATHE_EVERY, breathe } from "../../tests/support/breathe";
 
 const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 const N = 5;
-const LOOP_TIMEOUT_MS = 30000;
+// Brute-forcing 1,000 seeds is not a fast test. Coverage instrumentation and
+// four cores shared with the rest of the suite put these past the 30s this
+// used to allow; the work itself is unchanged.
+const LOOP_TIMEOUT_MS = 120_000;
 
 function permutations(n: number): number[][] {
   const out: number[][] = [];
@@ -43,8 +47,11 @@ function countSolutionsIndependently(clues: readonly { check(candidate: OrgAssig
 describe("generate", () => {
   it(
     "is deterministic: same seed -> identical puzzle, across 1000 seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const a = generate(seed, difficulty);
         const b = generate(seed, difficulty);
@@ -58,8 +65,11 @@ describe("generate", () => {
 
   it(
     "produces a valid bijection for both role and team, across 1000 seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const puzzle = generate(seed, difficulty);
         expect([...puzzle.solution.role].sort()).toEqual([0, 1, 2, 3, 4]);
@@ -71,8 +81,11 @@ describe("generate", () => {
 
   it(
     "every generated clue set is unique (brute force, independent of the generator's own check), across 1000 seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const puzzle = generate(seed, difficulty);
         expect(countSolutionsIndependently(puzzle.clues)).toBe(1);
@@ -83,8 +96,11 @@ describe("generate", () => {
 
   it(
     "every generated clue is true of the puzzle's true solution, across 1000 seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const puzzle = generate(seed, difficulty);
         for (const clue of puzzle.clues) {
@@ -97,8 +113,11 @@ describe("generate", () => {
 
   it(
     "clue count lands in a sane range across seeds",
-    () => {
+    async () => {
       for (let seed = 0; seed < 1000; seed += 1) {
+        if (seed % BREATHE_EVERY === 0) {
+          await breathe();
+        }
         const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
         const puzzle = generate(seed, difficulty);
         expect(puzzle.clues.length).toBeGreaterThanOrEqual(4);

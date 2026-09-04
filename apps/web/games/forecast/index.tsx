@@ -6,14 +6,30 @@ import { render } from "./GameView";
 import { shareGrid } from "./share";
 
 const help = (
-  <div className="flex flex-col gap-3 text-sm">
-    <p>Five questions. Drag the slider to your best estimate, then submit — there&rsquo;s no re-checking, so make it count.</p>
-    <ul className="list-disc pl-5">
-      <li>Score per question comes from how close you land: within 5% of the true value is 3 points, within 15% is 2, within 40% is 1, otherwise 0.</li>
-      <li>Hint narrows the slider&rsquo;s range by half, centred on the true value. You get 3 hints total, shared across all 5 questions.</li>
-      <li>Max score is 15. A new set of five every day.</li>
+  <>
+    <p className="mb-3.5">
+      Five questions with a number for an answer. Type it or drag the slider, then submit
+      &mdash; there is no re-checking, so make it count.
+    </p>
+    <ul className="mb-3.5">
+      <li className="mb-2 ml-[18px] list-disc">
+        Score comes from how close you land: within 5% of the true value is 3 points, within
+        15% is 2, within 40% is 1, otherwise 0.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Each answer is scored on screen before the next question appears.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Hint halves the slider&rsquo;s range around the true value. Three hints, shared
+        across all five questions.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">Fifteen points at stake. A new set of five every day.</li>
     </ul>
-  </div>
+    <p className="text-[var(--muted)]">
+      For example, if the answer is 88 and you say 92, that is within 5% &mdash; three
+      points. Say 130 and you are outside 40% &mdash; nothing.
+    </p>
+  </>
 );
 
 export const forecastGame: GameModule<ForecastPuzzle, ForecastState, ForecastMove> = {

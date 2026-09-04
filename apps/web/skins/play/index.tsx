@@ -152,6 +152,9 @@ function TextRun({
   groupTokens,
   onSelect,
 }: TextRunProps): React.ReactElement {
+  // A square tile is right for single glyphs; anything longer (Policy's
+  // probe words) gets a pill that sizes to its content instead.
+  const wordSized = items.some((item) => item.text.length > 1);
   return (
     <div
       role="group"
@@ -173,9 +176,11 @@ function TextRun({
               borderColor: token ? `var(${token})` : "var(--line)",
               color: locked ? "#fff" : "var(--ink)",
             }}
-            className={`flex h-[var(--tile)] w-[var(--tile)] items-center justify-center rounded-[var(--tile-radius)] border-[length:var(--tile-border)] text-[22px] font-bold transition-[background-color,border-color,transform] duration-[120ms] active:scale-[0.94] disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
-              item.state === "wrong" ? "bw-wrong" : ""
-            }`}
+            className={`flex h-[var(--tile)] items-center justify-center rounded-[var(--tile-radius)] border-[length:var(--tile-border)] font-bold transition-[background-color,border-color,transform] duration-[120ms] active:scale-[0.94] disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
+              wordSized
+                ? "px-4 text-[17px] lowercase"
+                : "w-[var(--tile)] text-[22px]"
+            } ${item.state === "wrong" ? "bw-wrong" : ""}`}
           >
             {item.text}
           </button>
@@ -276,32 +281,32 @@ function Log({ entries, ariaLabel }: LogProps): React.ReactElement {
       className="mb-[22px] flex flex-col gap-2 text-left text-[15px]"
     >
       {entries.map((entry) => (
-        <li
-          key={entry.id}
-          className="flex items-center gap-2 border-b border-[var(--line)] pb-2"
-        >
-          {entry.status !== undefined && (
-            <span
-              aria-hidden="true"
-              className="font-bold"
-              style={{
-                color: entry.status === "yes" ? "var(--accent-b-lock)" : "var(--danger)",
-              }}
-            >
-              {entry.status === "yes" ? "✓" : "✗"}
+        <li key={entry.id} className="flex items-start gap-2">
+          {entry.author !== undefined && (
+            <span className="w-14 shrink-0 pt-1.5 text-[13px] text-[var(--muted)]">
+              {entry.author}
             </span>
           )}
-          <span className="flex-1">
-            {entry.author !== undefined && (
-              <strong className="mr-2 font-semibold">{entry.author}</strong>
+          <span className="flex flex-1 items-center gap-2 rounded-[6px] border border-[var(--line)] px-3 py-1.5">
+            <span className="flex-1">{entry.text}</span>
+            {entry.status !== undefined && (
+              <>
+                <span
+                  aria-hidden="true"
+                  className="font-bold"
+                  style={{
+                    color:
+                      entry.status === "yes" ? "var(--accent-b-lock)" : "var(--danger)",
+                  }}
+                >
+                  {entry.status === "yes" ? "✓" : "✗"}
+                </span>
+                <span className="sr-only">
+                  {entry.status === "yes" ? "fits the rule" : "does not fit the rule"}
+                </span>
+              </>
             )}
-            {entry.text}
           </span>
-          {entry.status !== undefined && (
-            <span className="sr-only">
-              {entry.status === "yes" ? "fits the rule" : "does not fit the rule"}
-            </span>
-          )}
         </li>
       ))}
     </ul>
@@ -557,7 +562,7 @@ function LogicGrid({
   const cellFor = (rowId: string, colId: string) =>
     cells.find((cell) => cell.rowId === rowId && cell.colId === colId);
   return (
-    <div className="mb-[26px] overflow-x-auto">
+    <div className="relative mb-[26px] overflow-x-auto">
       <table className="mx-auto border-separate border-spacing-[3px] text-center text-[13px]">
         <caption className="sr-only">{ariaLabel}</caption>
         <thead>
@@ -567,9 +572,9 @@ function LogicGrid({
               <th
                 key={col.id}
                 scope="col"
-                className="h-[86px] whitespace-nowrap px-1 align-bottom font-medium text-[var(--muted)]"
+                className="relative h-[92px] w-9 p-0 align-bottom font-medium text-[var(--muted)]"
               >
-                <span className="inline-block origin-bottom-left translate-x-3 -rotate-45 whitespace-nowrap">
+                <span className="absolute bottom-1 left-1/2 origin-bottom-left -rotate-45 whitespace-nowrap">
                   {col.label}
                 </span>
               </th>

@@ -6,19 +6,30 @@ import { render } from "./GameView";
 import { shareGrid } from "./share";
 
 const help = (
-  <div className="flex flex-col gap-3 text-sm">
-    <p>
-      A 5&times;5 grid of numbers, with row and column totals in the margins. The totals are correct for the
-      original numbers &mdash; but a few cells (3 to 5, depending on the day) now show altered values, so some rows
-      and columns no longer add up.
+  <>
+    <p className="mb-3.5">
+      A 5&times;5 ledger with row and column totals in the margins. The totals are the
+      originals &mdash; a few cells (3 to 5, depending on the day) have been altered, so
+      some rows and columns no longer add up.
     </p>
-    <ul className="list-disc pl-5">
-      <li>Tap a cell to flag it as altered. Tap again to unflag.</li>
-      <li>Flag exactly as many cells as were altered, then Check. You&rsquo;ll learn how many of your flags are correct &mdash; not which ones.</li>
-      <li>Stuck? Hint reveals one altered cell and locks it in for you.</li>
-      <li>Five checks, three hints. A new grid every day.</li>
+    <ul className="mb-3.5">
+      <li className="mb-2 ml-[18px] list-disc">Tap a cell to flag it as altered. Tap again to unflag.</li>
+      <li className="mb-2 ml-[18px] list-disc">
+        A total shown in red belongs to a line that does not reconcile &mdash; at least one
+        of its cells was changed.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">
+        Flag exactly as many cells as were altered, then Check. You&rsquo;ll learn how many
+        of your flags are correct &mdash; not which ones.
+      </li>
+      <li className="mb-2 ml-[18px] list-disc">Stuck? Hint reveals one altered cell and locks it in for you.</li>
+      <li className="mb-2 ml-[18px] list-disc">Five checks, three hints. A new ledger every day.</li>
     </ul>
-  </div>
+    <p className="text-[var(--muted)]">
+      For example, a row reading 4 · 9 · 2 against a total of 14 is one short: one of those
+      three numbers is not what it was.
+    </p>
+  </>
 );
 
 export const auditGame: GameModule<AuditPuzzle, AuditState, AuditMove> = {

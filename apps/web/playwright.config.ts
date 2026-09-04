@@ -9,6 +9,9 @@ export default defineConfig({
   // sandbox; a real failure still fails after the retry.
   retries: process.env.CI ? 2 : 1,
   reporter: [["list"]],
+  // The visual baselines double as the reviewable "current screens" in
+  // docs/design/current, so they live there rather than beside the spec.
+  snapshotPathTemplate: "../../docs/design/current/{arg}{ext}",
   use: {
     baseURL: "http://127.0.0.1:3100",
     trace: "on-first-retry",

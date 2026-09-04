@@ -73,9 +73,9 @@ function groupVar(
 }
 
 const UNIT_CLASS: Record<UnitVariant, string> = {
-  tile: "flex h-11 w-11 items-center justify-center rounded-md border-2 border-[var(--line)] text-lg font-bold",
+  tile: "flex h-11 min-w-11 items-center justify-center rounded-md border-2 border-[var(--line)] px-2 text-lg font-bold",
   highlight: "inline-block min-w-6 rounded-sm px-1 text-center text-lg leading-8",
-  cell: "flex h-9 w-11 items-center justify-center border border-[var(--line)] text-base font-medium tabular-nums",
+  cell: "flex h-9 min-w-11 items-center justify-center border border-[var(--line)] px-2 text-base font-medium tabular-nums",
   mono: "inline-block min-w-6 px-1 text-center font-mono text-lg",
 };
 
@@ -142,7 +142,9 @@ export function createKitPrimitives(config: KitConfig): KitPrimitives {
                 textDecoration:
                   item.state === "wrong" ? "underline wavy var(--danger)" : undefined,
               }}
-              className={`${UNIT_CLASS[variant]} disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]`}
+              className={`${UNIT_CLASS[variant]} ${
+              onSelect && !locked ? "hover:outline hover:outline-1 hover:outline-[var(--brand)]" : ""
+            } disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]`}
             >
               {item.text}
             </button>
@@ -192,7 +194,7 @@ export function createKitPrimitives(config: KitConfig): KitPrimitives {
     onSelect,
   }: GridProps): React.ReactElement {
     return (
-      <div className="mb-5 overflow-x-auto">
+      <div className="relative mb-5 overflow-x-auto">
         <table className="border-collapse text-center text-sm">
           <caption className="sr-only">{ariaLabel}</caption>
           <tbody>
@@ -549,7 +551,7 @@ export function createKitPrimitives(config: KitConfig): KitPrimitives {
     const cellFor = (rowId: string, colId: string) =>
       cells.find((cell) => cell.rowId === rowId && cell.colId === colId);
     return (
-      <div className="mb-5 overflow-x-auto">
+      <div className="relative mb-5 overflow-x-auto">
         <table className="border-collapse text-center text-xs">
           <caption className="sr-only">{ariaLabel}</caption>
           <thead>

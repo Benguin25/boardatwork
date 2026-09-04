@@ -106,7 +106,7 @@ function Chrome({
               {DOC_TITLE}
             </button>
           </h1>
-          <div aria-hidden="true" className="mt-[6px] flex gap-0.5" data-testid="docs-menus">
+          <div aria-hidden="true" className="mt-[6px] flex gap-0.5 max-[640px]:hidden" data-testid="docs-menus">
             {MENUS.map((menu) => (
               <span key={menu} className="rounded px-[7px] py-0.5 text-[14px] hover:bg-[#e9eef6]">
                 {menu}
@@ -138,7 +138,7 @@ function Chrome({
       <div
         aria-hidden="true"
         data-testid="docs-toolbar"
-        className="mx-4 mt-2.5 flex items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-[#edf2fa] px-[14px] py-1.5 text-[14px]"
+        className="mx-4 mt-2.5 flex items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-[#edf2fa] px-[14px] py-1.5 text-[14px] max-[640px]:hidden"
       >
         <span className="flex-none rounded px-2 py-1">↶</span>
         <span className="flex-none rounded px-2 py-1">↷</span>
@@ -428,7 +428,7 @@ function Grid({
 }: GridProps): React.ReactElement {
   return (
     <Section label="Figures">
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table className="border-collapse text-center text-[10pt]">
           <caption className="sr-only">{ariaLabel}</caption>
           <tbody>
@@ -648,7 +648,7 @@ function LogicGrid({
     cells.find((cell) => cell.rowId === rowId && cell.colId === colId);
   return (
     <Section label="Assignments">
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table className="border-collapse text-center text-[9pt]">
           <caption className="sr-only">{ariaLabel}</caption>
           <thead>
@@ -717,7 +717,7 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
               {DOC_TITLE}
             </button>
           </h1>
-          <div aria-hidden="true" className="mt-[6px] flex gap-0.5">
+          <div aria-hidden="true" className="mt-[6px] flex gap-0.5 max-[640px]:hidden">
             {MENUS.map((menu) => (
               <span key={menu} className="rounded px-[7px] py-0.5 text-[14px]">
                 {menu}
