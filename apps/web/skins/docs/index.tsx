@@ -29,7 +29,12 @@ const ROOT_STYLE: React.CSSProperties = {
   ["--tile-bg" as string]: "#fef7e0",
   ["--accent-a" as string]: "#fbbc04",
   ["--accent-b" as string]: "#34a853",
-  ["--accent-c" as string]: "#4285f4",
+  // #4285f4 (Google blue 500) only reaches a 3.56:1 contrast ratio against
+  // white text, short of WCAG AA's 4.5:1 for the primary Actions button and
+  // Log avatar circle (both render white text on this token) — darkened to
+  // #1967d2 (5.37:1) to fix that (CLAUDE.md: "Accessibility is not
+  // optional"), without changing the Google-blue identity of the token.
+  ["--accent-c" as string]: "#1967d2",
   ["--text" as string]: "#202124",
   ["--bg" as string]: "#ffffff",
   ["--border" as string]: "#dadce0",
