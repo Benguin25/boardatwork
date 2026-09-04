@@ -84,6 +84,30 @@ describe("orgGame.render (via Play skin)", () => {
     expect(dispatch).toHaveBeenCalledWith({ type: "check" });
   });
 
+  it("shows the hints-remaining count once at least one hint has been used, and 'No hints left' once exhausted", () => {
+    const puzzle = orgGame.generate(2, "medium");
+    let state = orgGame.init(puzzle);
+    state = orgGame.reduce(state, { type: "hint" });
+    rtlRender(<>{orgGame.render(state, vi.fn(), playSkin)}</>);
+    expect(screen.getByRole("button", { name: `Hint (${String(3 - state.hintsUsed)} left)` })).toBeInTheDocument();
+
+    const exhausted = { ...state, hintsUsed: 3 };
+    rtlRender(<>{orgGame.render(exhausted, vi.fn(), playSkin)}</>);
+    expect(screen.getByRole("button", { name: "No hints left" })).toBeInTheDocument();
+  });
+
+  it("shows success feedback tone once won, and error tone once lost", () => {
+    const puzzle = orgGame.generate(2, "medium");
+    const state = orgGame.init(puzzle);
+    const won = { ...state, done: true, won: true, message: "Cleared!" };
+    rtlRender(<>{orgGame.render(won, vi.fn(), playSkin)}</>);
+    expect(screen.getByRole("status")).toHaveTextContent("Cleared!");
+
+    const lost = { ...state, done: true, won: false, message: "Out of checks." };
+    rtlRender(<>{orgGame.render(lost, vi.fn(), playSkin)}</>);
+    expect(screen.getAllByRole("status").at(-1)).toHaveTextContent("Out of checks.");
+  });
+
   it("shows a yes glyph for a marked cell", () => {
     const puzzle = orgGame.generate(2, "medium");
     let state = orgGame.init(puzzle);

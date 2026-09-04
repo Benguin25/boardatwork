@@ -1,5 +1,5 @@
 import type { LogicGridCell, SkinPrimitives } from "@/components/primitives/types";
-import { MAX_CHECKS, MAX_HINTS, canCheck, type OrgMove, type OrgState } from "./engine";
+import { MAX_CHECKS, MAX_HINTS, canCheck, type CellMark, type OrgMove, type OrgState } from "./engine";
 
 export function render(state: OrgState, dispatch: (move: OrgMove) => void, skin: SkinPrimitives): React.ReactNode {
   const { LogicGrid, Passes, Actions, Feedback, Log } = skin;
@@ -15,7 +15,7 @@ export function render(state: OrgState, dispatch: (move: OrgMove) => void, skin:
   puzzle.people.forEach((_, p) => {
     for (let col = 0; col < 10; col += 1) {
       const colId = col < 5 ? `role-${String(col)}` : `team-${String(col - 5)}`;
-      cells.push({ rowId: `person-${String(p)}`, colId, state: marks[p]?.[col] ?? "empty" });
+      cells.push({ rowId: `person-${String(p)}`, colId, state: marks[p]?.[col] as CellMark });
     }
   });
 

@@ -36,12 +36,14 @@ async function makeProbes(page: Page, count: number): Promise<void> {
   for (let i = 0; i < count; i += 1) {
     const word = puzzle.probeCandidates[i] as string;
     const chip = page.getByRole("button", { name: `Probe the word ${word}` });
-    await chip.click();
-    // The probed chip disappears from the list once state updates, and the
-    // remaining chips reflow (flex-wrap). Waiting for that here, rather
-    // than immediately querying the next chip, avoids a race where the
-    // next locator resolves against a not-yet-settled layout and the click
-    // lands on the wrong (just-reflowed) button.
+    // Each probe removes its chip from a flex-wrapped list, reflowing the
+    // remaining chips (and pushing them down as the Log above grows).
+    // Playwright's coordinate-based `.click()` occasionally fires mid-reflow
+    // and lands on whatever chip has since slid into that same screen
+    // position; `dispatchEvent("click")` fires a real DOM click event on
+    // the resolved element directly, sidestepping that hit-testing race.
+    await expect(chip).toBeVisible();
+    await chip.dispatchEvent("click");
     await expect(chip).toBeHidden();
   }
 }
