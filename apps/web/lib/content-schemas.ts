@@ -1,4 +1,5 @@
 import type { ZodTypeAny } from "zod";
+import { BraidContentSchema } from "./content/braid-schema";
 
 /**
  * Registry of content-pack schemas keyed by game id. Populated as each
@@ -6,4 +7,6 @@ import type { ZodTypeAny } from "zod";
  * under `content/<gameId>` (or `content/<gameId>.json`) against the schema
  * registered here.
  */
-export const contentSchemas: Record<string, ZodTypeAny> = {};
+export const contentSchemas: Record<string, ZodTypeAny> = {
+  braid: BraidContentSchema,
+};

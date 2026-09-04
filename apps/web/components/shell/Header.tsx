@@ -13,7 +13,14 @@ export function Header(): React.ReactElement {
   const [pickerOpen, setPickerOpen] = useState(false);
 
   return (
-    <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-2 text-sm">
+    // A <nav>, not a <header>: game pages nest this above a skin's own
+    // Chrome, which has its own page-banner <header> — two <header>
+    // landmarks on one page is an axe "duplicate banner" violation, so
+    // this global controls strip uses a distinct landmark role instead.
+    <nav
+      aria-label="Board at Work controls"
+      className="flex items-center justify-between border-b border-neutral-200 px-4 py-2 text-sm"
+    >
       <span className="font-semibold">Board at Work</span>
       <div className="flex items-center gap-3">
         {mode === "work" && (
@@ -31,6 +38,6 @@ export function Header(): React.ReactElement {
         </button>
       </div>
       {pickerOpen && <DisguisePicker onClose={() => { setPickerOpen(false); }} />}
-    </header>
+    </nav>
   );
 }

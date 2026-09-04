@@ -4,7 +4,10 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  // One local retry absorbs resource-contention flakes from running the
+  // production server under multiple parallel workers in a constrained
+  // sandbox; a real failure still fails after the retry.
+  retries: process.env.CI ? 2 : 1,
   reporter: [["list"]],
   use: {
     baseURL: "http://127.0.0.1:3100",

@@ -2,14 +2,19 @@ import { z } from "zod";
 import { InvalidChallengeCodeError } from "./errors";
 import { DifficultySchema } from "./schemas";
 
-/** SPEC §4.6: `/[game]/p/[code]` where code = base64url of `{seed, difficulty, contentVersion, by, r}`. */
+/**
+ * SPEC §4.6: `/[game]/p/[code]` where code = base64url of `{seed,
+ * difficulty, contentVersion, by, r}`. `r` is the sender's result —
+ * checks used if they won, `null` if they didn't clear it — so the
+ * recipient's banner can read "cleared this in 3/5" or "didn't clear it".
+ */
 export const ChallengePayloadSchema = z.object({
   game: z.string().min(1),
   seed: z.number().int(),
   difficulty: DifficultySchema,
   contentVersion: z.number().int().nonnegative(),
   by: z.string().min(1).max(40),
-  r: z.number(),
+  r: z.number().nullable(),
 });
 
 export type ChallengePayload = z.infer<typeof ChallengePayloadSchema>;

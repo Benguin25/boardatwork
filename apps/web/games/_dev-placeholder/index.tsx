@@ -1,6 +1,7 @@
 import {
   buildShareGrid,
   createRng,
+  hashSeed,
   shareGridHeader,
   shareLine,
   type CheckResult,
@@ -136,6 +137,9 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
   id: "braid",
   meta: { name: "Placeholder", tagline: "Skin smoke test", checks: CHECKS, hints: HINTS },
   homeSkin: "play",
+  help: <p>This fixture exercises every skin primitive for Gate 2.</p>,
+  dailySeed: (dateKey) => hashSeed("braid", dateKey),
+  practiceSeed: (counter) => hashSeed("braid", "practice", counter),
   generate,
   init,
   reduce,
