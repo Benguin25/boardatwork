@@ -26,7 +26,7 @@ import type {
  */
 const ROOT_STYLE: React.CSSProperties = {
   ["--tile-bg" as string]: "#ffffff",
-  ["--accent-a" as string]: "#34a853",
+  ["--accent-a" as string]: "#188038",
   ["--accent-b" as string]: "#fbbc04",
   ["--accent-c" as string]: "#4285f4",
   ["--text" as string]: "#202124",

@@ -183,7 +183,7 @@ export function reduce(state: OrgState, move: OrgMove): OrgState {
       if (state.locked[move.person]?.[move.col]) {
         return state;
       }
-      const current = state.marks[move.person]?.[move.col] ?? "empty";
+      const current = state.marks[move.person]?.[move.col] as CellMark;
       const next = cycleMark(current);
       const marks = next === "yes" ? setYes(state.marks, move.person, move.col) : state.marks.map((row, p) => (p === move.person ? row.map((cell, c) => (c === move.col ? next : cell)) : row));
       return { ...state, marks };

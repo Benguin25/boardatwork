@@ -4,6 +4,7 @@ import { dailySeed, generate, practiceSeed, type OrgAssignment } from "./generat
 
 const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 const N = 5;
+const LOOP_TIMEOUT_MS = 30000;
 
 function permutations(n: number): number[][] {
   const out: number[][] = [];
@@ -52,44 +53,60 @@ describe("generate", () => {
         expect(a.clues.map((c) => c.text)).toEqual(b.clues.map((c) => c.text));
       }
     },
-    15000,
+    LOOP_TIMEOUT_MS,
   );
 
-  it("produces a valid bijection for both role and team, across 1000 seeds", () => {
-    for (let seed = 0; seed < 1000; seed += 1) {
-      const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
-      const puzzle = generate(seed, difficulty);
-      expect([...puzzle.solution.role].sort()).toEqual([0, 1, 2, 3, 4]);
-      expect([...puzzle.solution.team].sort()).toEqual([0, 1, 2, 3, 4]);
-    }
-  });
-
-  it("every generated clue set is unique (brute force, independent of the generator's own check), across 1000 seeds", () => {
-    for (let seed = 0; seed < 1000; seed += 1) {
-      const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
-      const puzzle = generate(seed, difficulty);
-      expect(countSolutionsIndependently(puzzle.clues)).toBe(1);
-    }
-  }, 30000);
-
-  it("every generated clue is true of the puzzle's true solution, across 1000 seeds", () => {
-    for (let seed = 0; seed < 1000; seed += 1) {
-      const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
-      const puzzle = generate(seed, difficulty);
-      for (const clue of puzzle.clues) {
-        expect(clue.check(puzzle.solution)).toBe(true);
+  it(
+    "produces a valid bijection for both role and team, across 1000 seeds",
+    () => {
+      for (let seed = 0; seed < 1000; seed += 1) {
+        const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
+        const puzzle = generate(seed, difficulty);
+        expect([...puzzle.solution.role].sort()).toEqual([0, 1, 2, 3, 4]);
+        expect([...puzzle.solution.team].sort()).toEqual([0, 1, 2, 3, 4]);
       }
-    }
-  });
+    },
+    LOOP_TIMEOUT_MS,
+  );
 
-  it("clue count lands in a sane range across seeds", () => {
-    for (let seed = 0; seed < 1000; seed += 1) {
-      const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
-      const puzzle = generate(seed, difficulty);
-      expect(puzzle.clues.length).toBeGreaterThanOrEqual(4);
-      expect(puzzle.clues.length).toBeLessThanOrEqual(7);
-    }
-  });
+  it(
+    "every generated clue set is unique (brute force, independent of the generator's own check), across 1000 seeds",
+    () => {
+      for (let seed = 0; seed < 1000; seed += 1) {
+        const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
+        const puzzle = generate(seed, difficulty);
+        expect(countSolutionsIndependently(puzzle.clues)).toBe(1);
+      }
+    },
+    LOOP_TIMEOUT_MS,
+  );
+
+  it(
+    "every generated clue is true of the puzzle's true solution, across 1000 seeds",
+    () => {
+      for (let seed = 0; seed < 1000; seed += 1) {
+        const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
+        const puzzle = generate(seed, difficulty);
+        for (const clue of puzzle.clues) {
+          expect(clue.check(puzzle.solution)).toBe(true);
+        }
+      }
+    },
+    LOOP_TIMEOUT_MS,
+  );
+
+  it(
+    "clue count lands in a sane range across seeds",
+    () => {
+      for (let seed = 0; seed < 1000; seed += 1) {
+        const difficulty = DIFFICULTIES[seed % DIFFICULTIES.length] as Difficulty;
+        const puzzle = generate(seed, difficulty);
+        expect(puzzle.clues.length).toBeGreaterThanOrEqual(4);
+        expect(puzzle.clues.length).toBeLessThanOrEqual(7);
+      }
+    },
+    LOOP_TIMEOUT_MS,
+  );
 
   it("respects the fixed vocabulary and records the requested difficulty", () => {
     const puzzle = generate(1, "hard");

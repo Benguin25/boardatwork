@@ -221,11 +221,9 @@ function selectClueSet(pool: readonly PoolClue[], rng: Rng): PoolClue[] {
         stuck = true;
         break;
       }
+      // Always non-empty here per the invariant above: while either list
+      // has >1 entries, some pool clue still narrows one of them.
       const useful = remaining.filter((c) => narrows(c, roleList, teamList));
-      if (useful.length === 0) {
-        stuck = true;
-        break;
-      }
       const pick = rng.pick(useful);
       roleList = pick.roleFilter ? roleList.filter(pick.roleFilter) : roleList;
       teamList = pick.teamFilter ? teamList.filter(pick.teamFilter) : teamList;

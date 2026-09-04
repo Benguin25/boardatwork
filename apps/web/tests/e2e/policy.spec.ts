@@ -35,7 +35,14 @@ async function dismissHowToPlay(page: Page): Promise<void> {
 async function makeProbes(page: Page, count: number): Promise<void> {
   for (let i = 0; i < count; i += 1) {
     const word = puzzle.probeCandidates[i] as string;
-    await page.getByRole("button", { name: `Probe the word ${word}` }).click();
+    const chip = page.getByRole("button", { name: `Probe the word ${word}` });
+    await chip.click();
+    // The probed chip disappears from the list once state updates, and the
+    // remaining chips reflow (flex-wrap). Waiting for that here, rather
+    // than immediately querying the next chip, avoids a race where the
+    // next locator resolves against a not-yet-settled layout and the click
+    // lands on the wrong (just-reflowed) button.
+    await expect(chip).toBeHidden();
   }
 }
 

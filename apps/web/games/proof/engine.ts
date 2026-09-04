@@ -123,7 +123,7 @@ export function reduce(state: ProofState, move: ProofMove): ProofState {
       return { ...state, flagged: state.flagged.map((f, i) => (i === move.index ? !f : f)) };
     }
     case "check":
-      return runCheck(state).state;
+      return canCheck(state) ? runCheck(state).state : state;
     case "hint":
       return runHint(state);
   }
@@ -152,5 +152,5 @@ export function score(state: ProofState): Score {
 }
 
 export function canCheck(state: ProofState): boolean {
-  return !state.done;
+  return !state.done && state.flagged.some((f) => f);
 }

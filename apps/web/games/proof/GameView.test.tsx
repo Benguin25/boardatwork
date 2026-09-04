@@ -33,9 +33,17 @@ describe("proofGame.render (via Play skin)", () => {
     expect(dispatch).toHaveBeenCalledWith({ type: "toggleFlag", index: 3 });
   });
 
-  it("allows Check even before anything is flagged", () => {
+  it("disables Check until at least one word is flagged", () => {
     const puzzle = proofGame.generate(2, "medium");
     const state = proofGame.init(puzzle);
+    rtlRender(<>{proofGame.render(state, vi.fn(), playSkin)}</>);
+    expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
+  });
+
+  it("enables Check once a word is flagged", () => {
+    const puzzle = proofGame.generate(2, "medium");
+    let state = proofGame.init(puzzle);
+    state = { ...state, flagged: state.flagged.map((_, i) => i === 0) };
     rtlRender(<>{proofGame.render(state, vi.fn(), playSkin)}</>);
     expect(screen.getByRole("button", { name: "Check" })).toBeEnabled();
   });
@@ -73,7 +81,8 @@ describe("proofGame.render (via Play skin)", () => {
 
   it("dispatches a check move when Check is clicked", () => {
     const puzzle = proofGame.generate(2, "medium");
-    const state = proofGame.init(puzzle);
+    let state = proofGame.init(puzzle);
+    state = { ...state, flagged: state.flagged.map((_, i) => i === 0) };
     const dispatch = vi.fn();
     rtlRender(<>{proofGame.render(state, dispatch, playSkin)}</>);
     screen.getByRole("button", { name: "Check" }).click();

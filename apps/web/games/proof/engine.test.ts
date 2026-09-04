@@ -74,13 +74,10 @@ describe("reduce: toggleFlag", () => {
 });
 
 describe("reduce: check", () => {
-  it("does nothing if nothing is flagged (0 of 5 correct, not done)", () => {
-    let state = engine.init(fixturePassage());
-    state = engine.reduce(state, { type: "check" });
-    expect(state.checksUsed).toBe(1);
-    expect(state.done).toBe(false);
-    expect(state.won).toBe(false);
-    expect(state.message).toContain("0 of 5");
+  it("does nothing (via reduce) if nothing is flagged yet", () => {
+    const state = engine.init(fixturePassage());
+    const next = engine.reduce(state, { type: "check" });
+    expect(next).toBe(state);
   });
 
   it("wins immediately when exactly the 5 true impostors are flagged", () => {
@@ -123,6 +120,7 @@ describe("reduce: check", () => {
 
   it("ends the puzzle as a loss after MAX_CHECKS unsuccessful checks", () => {
     let state = engine.init(fixturePassage());
+    state = engine.reduce(state, { type: "toggleFlag", index: 0 }); // never a true impostor
     for (let i = 0; i < engine.MAX_CHECKS; i += 1) {
       state = engine.reduce(state, { type: "check" });
     }
@@ -228,7 +226,9 @@ describe("check/isDone/score", () => {
 
   it("score reflects fewer points the more checks a win took", () => {
     let state = engine.init(fixturePassage());
+    state = engine.reduce(state, { type: "toggleFlag", index: 0 }); // never a true impostor
     state = engine.reduce(state, { type: "check" }); // wasted check #1
+    state = engine.reduce(state, { type: "toggleFlag", index: 0 }); // unflag it
     state = flagAll(state, fixturePassage().impostorIndices);
     state = engine.reduce(state, { type: "check" }); // win on check #2
     const s = engine.score(state);
@@ -246,13 +246,21 @@ describe("check/isDone/score", () => {
 });
 
 describe("canCheck", () => {
-  it("is true before the puzzle is done, even with nothing flagged", () => {
+  it("is false with nothing flagged yet", () => {
     const state = engine.init(makePassage());
+    expect(engine.canCheck(state)).toBe(false);
+  });
+
+  it("is true once at least one word is flagged", () => {
+    let state = engine.init(makePassage());
+    state = engine.reduce(state, { type: "toggleFlag", index: 0 });
     expect(engine.canCheck(state)).toBe(true);
   });
 
-  it("is false once the puzzle is done", () => {
-    const state = { ...engine.init(makePassage()), done: true };
+  it("is false once the puzzle is done, even with words flagged", () => {
+    let state = engine.init(makePassage());
+    state = engine.reduce(state, { type: "toggleFlag", index: 0 });
+    state = { ...state, done: true };
     expect(engine.canCheck(state)).toBe(false);
   });
 });
