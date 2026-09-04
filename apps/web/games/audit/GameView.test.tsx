@@ -5,7 +5,7 @@ import * as engine from "./engine";
 import { auditGame } from "./index";
 
 describe("auditGame.render (via Play skin)", () => {
-  it("renders the grid, totals, passes, actions, feedback, and log", () => {
+  it("renders the grid, totals, checks counter, actions, and feedback", () => {
     const puzzle = auditGame.generate(2, "medium");
     const state = auditGame.init(puzzle);
     const dispatch = vi.fn();
@@ -14,7 +14,6 @@ describe("auditGame.render (via Play skin)", () => {
 
     expect(screen.getAllByRole("button", { name: /^Row \d, column \d:/ })).toHaveLength(25);
     expect(screen.getByText(/Checks/)).toBeInTheDocument();
-    expect(screen.getByText(/Hints/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(state.message);
@@ -54,11 +53,11 @@ describe("auditGame.render (via Play skin)", () => {
     expect(screen.getByRole("button", { name: /Hint/ })).toBeDisabled();
   });
 
-  it("shows the intro log entry naming how many cells are altered", () => {
+  it("names how many cells are flagged out of how many were altered", () => {
     const puzzle = auditGame.generate(2, "medium");
     const state = auditGame.init(puzzle);
     rtlRender(<>{auditGame.render(state, vi.fn(), playSkin)}</>);
-    expect(screen.getByText(new RegExp(`${String(puzzle.k)} cells altered`))).toBeInTheDocument();
+    expect(screen.getByText(`0 of ${String(puzzle.k)} flagged`)).toBeInTheDocument();
   });
 
   it("shows a remaining-hints count once at least one hint has been used", () => {

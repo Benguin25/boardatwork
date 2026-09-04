@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import type {
   ActionsProps,
   ChromeProps,
@@ -8,176 +9,347 @@ import type {
   LogProps,
   LogicGridProps,
   ModalProps,
+  NumberFieldProps,
   PassageProps,
   PassesProps,
+  PromptProps,
   SkinPrimitives,
   SliderProps,
   SlotsProps,
+  SummaryProps,
   TextRunProps,
-  TileRowProps,
-  UnitState,
 } from "@/components/primitives/types";
+import { useOverlay } from "@/components/shell/use-overlay";
+import { svgFavicon } from "@/lib/favicon";
 
 /**
- * Play skin (SPEC §3.1): the "newspaper games" reference look — thin black
- * rules, a centred column, square tiles that fill with colour, black pill
- * buttons, dot counters. This is the skin every other disguise is checked
- * against for behaviour parity.
+ * Play skin — the un-disguised look, rebuilt against
+ * `reference-braid-prototype.html`. Every colour and size comes from
+ * `tokens.css`; nothing here is hard-coded and nothing here knows which
+ * game it is rendering.
  */
-const ROOT_STYLE: React.CSSProperties = {
-  ["--tile-bg" as string]: "#f4f4f0",
-  ["--accent-a" as string]: "#facc15",
-  ["--accent-b" as string]: "#4ade80",
-  ["--accent-c" as string]: "#60a5fa",
-  ["--text" as string]: "#111111",
-  ["--bg" as string]: "#ffffff",
-  ["--border" as string]: "#111111",
-  fontFamily:
-    '"Libre Franklin", ui-sans-serif, system-ui, -apple-system, sans-serif',
-};
 
-function unitStyle(state: UnitState | undefined, token: string | undefined): React.CSSProperties {
-  const base: React.CSSProperties = {
-    background: token ? `var(${token})` : "var(--tile-bg)",
-    border: "2px solid var(--border)",
-    color: "var(--text)",
-  };
-  if (state === "wrong") {
-    base.background = "#fecaca";
-    base.textDecoration = "line-through";
-  } else if (state === "correct") {
-    base.fontWeight = 700;
-  } else if (state === "locked") {
-    base.fontWeight = 700;
-    base.borderStyle = "double";
-  } else if (state === "selected") {
-    base.outline = "3px solid var(--text)";
+const PILL =
+  "rounded-full border border-[var(--ink)] bg-[var(--paper)] px-[26px] py-[14px] text-[16px] font-semibold text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--ink)]";
+const PILL_SOLID =
+  "rounded-full border border-[var(--ink)] bg-[var(--ink)] px-[26px] py-[14px] text-[16px] font-semibold text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--ink)]";
+
+function tokenFor(
+  groupId: string | undefined,
+  groupTokens: Readonly<Record<string, string>> | undefined,
+  locked: boolean,
+): string | undefined {
+  const base = groupId ? groupTokens?.[groupId] : undefined;
+  if (!base) {
+    return undefined;
   }
-  return base;
+  // Every skin defines a darker `-lock` companion for each group token, so a
+  // locked unit reads as locked by weight *and* value, not hue alone.
+  return locked ? `${base}-lock` : base;
 }
 
-function Chrome({ title, children, onTitleClick }: ChromeProps): React.ReactElement {
+function Chrome({
+  title,
+  subtitle,
+  meta,
+  nav,
+  onChangeDisguise,
+  children,
+}: ChromeProps): React.ReactElement {
   return (
-    <div style={ROOT_STYLE} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <header className="border-b-2 border-[var(--border)] py-4">
-        <div className="mx-auto flex max-w-[560px] items-center justify-between px-4">
-          <h1 className="text-lg font-bold tracking-tight">
-            {onTitleClick ? (
-              <button
-                type="button"
-                onClick={onTitleClick}
-                className="underline-offset-4 hover:underline"
-              >
-                {title}
-              </button>
-            ) : (
-              title
-            )}
-          </h1>
-        </div>
-      </header>
-      <main className="mx-auto max-w-[560px] px-4 py-6">{children}</main>
-    </div>
-  );
-}
-
-function TextRun({ items, groupTokens, onSelect }: TextRunProps): React.ReactElement {
-  return (
-    <div className="flex flex-wrap gap-1" role="group" aria-label="Letters">
-      {items.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          onClick={() => onSelect?.(item.id)}
-          aria-label={item.ariaLabel ?? item.text}
-          aria-pressed={item.state === "selected"}
-          disabled={!onSelect}
-          style={unitStyle(item.state, item.groupId ? groupTokens?.[item.groupId] : undefined)}
-          className="flex h-10 w-10 items-center justify-center rounded text-lg font-semibold uppercase disabled:cursor-default"
-        >
-          {item.text}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function TileRow({ rows, groupTokens, onSelect }: TileRowProps): React.ReactElement {
-  return (
-    <div className="flex flex-col gap-2">
-      {rows.map((row) => (
-        <div key={row.id} className="flex items-center gap-2">
-          {row.label !== undefined && (
-            <span className="w-20 shrink-0 text-sm font-medium">{row.label}</span>
+    <div data-testid="chrome-play" className="skin-play min-h-screen">
+      <div className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
+        <h1 className="text-[26px] font-black leading-none tracking-[-0.02em]">
+          {title}
+          {subtitle !== undefined && (
+            <small className="ml-[10px] text-[13px] font-normal tracking-normal text-[var(--muted)]">
+              {subtitle}
+            </small>
           )}
-          <div className="flex flex-wrap gap-1" role="group" aria-label={row.label ?? "Row"}>
-            {row.items.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onSelect?.(row.id, item.id)}
-                aria-label={item.ariaLabel ?? item.text}
-                disabled={!onSelect}
-                style={unitStyle(item.state, item.groupId ? groupTokens?.[item.groupId] : undefined)}
-                className="flex h-9 w-9 items-center justify-center rounded text-base font-semibold uppercase disabled:cursor-default"
-              >
-                {item.text}
-              </button>
-            ))}
-          </div>
+        </h1>
+        <nav aria-label="Puzzle" className="flex gap-[6px]">
+          {nav.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={item.onClick}
+              className="rounded-[6px] px-[10px] py-[8px] text-[14px] font-medium hover:bg-[#f0f0f0]"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+      <main className="mx-auto max-w-[var(--column)] px-[18px] pb-20 pt-7 text-center">
+        {meta !== undefined && (
+          <div className="mb-[10px] text-[14px] text-[var(--muted)]">{meta}</div>
+        )}
+        {children}
+        <div className="mt-10 text-center text-[13px] text-[var(--muted)]">
+          <button
+            type="button"
+            onClick={onChangeDisguise}
+            className="text-[13px] text-[var(--muted)] underline underline-offset-[3px]"
+          >
+            Work mode
+          </button>{" "}
+          · Esc toggles between modes
         </div>
-      ))}
+      </main>
     </div>
   );
 }
 
-function Slots({ slots, onSelect }: SlotsProps): React.ReactElement {
+function Prompt({ headline, tone, note }: PromptProps): React.ReactElement {
+  const pending = tone === "pending";
   return (
-    <div className="flex flex-wrap gap-1" role="group" aria-label="Answer slots">
-      {slots.map((slot) => (
+    <>
+      <p
+        className={
+          pending
+            ? "mb-[6px] min-h-[26px] text-[17px] font-normal italic leading-[1.3] text-[var(--muted)]"
+            : "mb-[6px] min-h-[26px] text-[20px] font-bold leading-[1.3]"
+        }
+      >
+        {headline}
+      </p>
+      {note !== undefined && (
+        <p className="mb-[22px] text-[14px] text-[var(--muted)]">{note}</p>
+      )}
+    </>
+  );
+}
+
+function TextRun({
+  items,
+  ariaLabel,
+  groupTokens,
+  onSelect,
+}: TextRunProps): React.ReactElement {
+  return (
+    <div
+      role="group"
+      aria-label={ariaLabel}
+      className="mb-[26px] flex flex-wrap justify-center gap-[6px]"
+    >
+      {items.map((item) => {
+        const locked = item.state === "locked";
+        const token = tokenFor(item.groupId, groupTokens, locked);
+        return (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onSelect?.(item.id)}
+            aria-label={item.ariaLabel ?? item.text}
+            disabled={locked || !onSelect}
+            style={{
+              background: token ? `var(${token})` : "var(--paper)",
+              borderColor: token ? `var(${token})` : "var(--line)",
+              color: locked ? "#fff" : "var(--ink)",
+            }}
+            className={`flex h-[var(--tile)] w-[var(--tile)] items-center justify-center rounded-[var(--tile-radius)] border-[length:var(--tile-border)] text-[22px] font-bold transition-[background-color,border-color,transform] duration-[120ms] active:scale-[0.94] disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
+              item.state === "wrong" ? "bw-wrong" : ""
+            }`}
+          >
+            {item.text}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function Slots({ rows, groupTokens }: SlotsProps): React.ReactElement {
+  return (
+    <div className="mb-[28px] flex flex-col items-center gap-3">
+      {rows.map((row) => {
+        const token = tokenFor(row.groupId, groupTokens, true);
+        return (
+          <div
+            key={row.id}
+            role="group"
+            aria-label={row.ariaLabel}
+            className="flex items-end gap-[5px]"
+          >
+            {row.slots.map((slot) => (
+              <span
+                key={slot.id}
+                style={{ borderColor: token ? `var(${token})` : "var(--line)" }}
+                className="flex h-9 w-[30px] items-end justify-center border-b-[3px] pb-[2px] text-[22px] font-bold"
+              >
+                {slot.value ?? ""}
+              </span>
+            ))}
+            {row.note !== undefined && (
+              <span className="ml-2 text-[13px] text-[var(--muted)]">{row.note}</span>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Passes({ label, used, total }: PassesProps): React.ReactElement {
+  return (
+    <div
+      className="mb-[18px] flex items-center justify-center gap-2 text-[14px] text-[var(--muted)]"
+      aria-label={`${label}: ${String(used)} of ${String(total)} used`}
+    >
+      <span>{label}</span>
+      <span className="flex gap-[6px]" aria-hidden="true">
+        {Array.from({ length: total }, (_, i) => (
+          <span
+            key={i}
+            className="h-3 w-3 rounded-full border-2 border-[var(--ink)]"
+            style={{ background: i < used ? "var(--ink)" : "transparent" }}
+          />
+        ))}
+      </span>
+    </div>
+  );
+}
+
+function Actions({ actions }: ActionsProps): React.ReactElement {
+  return (
+    <div className="flex flex-wrap justify-center gap-[10px]">
+      {actions.map((action) => (
         <button
-          key={slot.id}
+          key={action.id}
           type="button"
-          onClick={() => onSelect?.(slot.id)}
-          aria-label={slot.value ?? slot.placeholder ?? "Empty slot"}
-          disabled={!onSelect}
-          style={unitStyle(slot.state, undefined)}
-          className="flex h-10 w-10 items-center justify-center rounded text-lg font-semibold disabled:cursor-default"
+          onClick={action.onClick}
+          disabled={action.disabled}
+          className={action.variant === "primary" ? PILL_SOLID : PILL}
         >
-          {slot.value ?? ""}
+          {action.label}
         </button>
       ))}
     </div>
   );
 }
 
-function Grid({ rows, cols, cells, rowTotals, colTotals, onSelect }: GridProps): React.ReactElement {
+function Feedback({ message, tone }: FeedbackProps): React.ReactElement {
   return (
-    <table className="border-collapse text-center">
+    <p
+      role="status"
+      aria-live="polite"
+      className="mt-[18px] min-h-[24px] text-[16px]"
+      style={{ color: tone === "error" ? "var(--danger)" : "var(--ink)" }}
+    >
+      {tone === "success" && message ? "✓ " : ""}
+      {message}
+    </p>
+  );
+}
+
+function Log({ entries, ariaLabel }: LogProps): React.ReactElement {
+  return (
+    <ul
+      aria-label={ariaLabel}
+      className="mb-[22px] flex flex-col gap-2 text-left text-[15px]"
+    >
+      {entries.map((entry) => (
+        <li
+          key={entry.id}
+          className="flex items-center gap-2 border-b border-[var(--line)] pb-2"
+        >
+          {entry.status !== undefined && (
+            <span
+              aria-hidden="true"
+              className="font-bold"
+              style={{
+                color: entry.status === "yes" ? "var(--accent-b-lock)" : "var(--danger)",
+              }}
+            >
+              {entry.status === "yes" ? "✓" : "✗"}
+            </span>
+          )}
+          <span className="flex-1">
+            {entry.author !== undefined && (
+              <strong className="mr-2 font-semibold">{entry.author}</strong>
+            )}
+            {entry.text}
+          </span>
+          {entry.status !== undefined && (
+            <span className="sr-only">
+              {entry.status === "yes" ? "fits the rule" : "does not fit the rule"}
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Summary({ items, ariaLabel }: SummaryProps): React.ReactElement {
+  return (
+    <dl
+      aria-label={ariaLabel}
+      className="mb-[22px] grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-left text-[15px]"
+    >
+      {items.map((item) => (
+        <div key={item.id} className="contents">
+          <dt className="text-[var(--muted)]">{item.label}</dt>
+          <dd className="font-semibold">{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function Grid({
+  rows,
+  cols,
+  cells,
+  ariaLabel,
+  rowTotals,
+  colTotals,
+  onSelect,
+}: GridProps): React.ReactElement {
+  return (
+    <table className="mx-auto mb-[26px] border-separate border-spacing-[3px] text-center">
+      <caption className="sr-only">{ariaLabel}</caption>
       <tbody>
         {Array.from({ length: rows }, (_, r) => (
           <tr key={r}>
             {Array.from({ length: cols }, (_, c) => {
               const cell = cells[r * cols + c];
-              if (!cell) return <td key={c} />;
+              if (!cell) {
+                return <td key={c} />;
+              }
+              const flagged = cell.state === "selected" || cell.state === "locked";
               return (
-                <td key={cell.id} className="p-0.5">
+                <td key={cell.id}>
                   <button
                     type="button"
                     onClick={() => onSelect?.(cell.id)}
-                    disabled={!onSelect}
-                    aria-label={`Row ${String(r + 1)}, column ${String(c + 1)}: ${cell.value}`}
-                    style={unitStyle(cell.state, undefined)}
-                    className="flex h-10 w-10 items-center justify-center rounded text-sm font-medium disabled:cursor-default"
+                    disabled={cell.state === "locked" || !onSelect}
+                    aria-pressed={flagged}
+                    aria-label={`Row ${String(r + 1)}, column ${String(c + 1)}: ${cell.value}${
+                      flagged ? ", flagged" : ""
+                    }`}
+                    style={{
+                      background: flagged ? "var(--accent-a)" : "var(--paper)",
+                      borderColor: flagged ? "var(--accent-a-lock)" : "var(--line)",
+                    }}
+                    className="flex h-12 w-12 items-center justify-center rounded-[var(--tile-radius)] border-[length:var(--tile-border)] text-[16px] font-medium tabular-nums disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)]"
                   >
                     {cell.value}
                   </button>
                 </td>
               );
             })}
-            {rowTotals && (
-              <td className="pl-2 text-sm font-semibold" aria-label={`Row ${String(r + 1)} total`}>
-                {rowTotals[r]}
+            {rowTotals?.[r] !== undefined && (
+              <td
+                className="pl-3 text-[14px] tabular-nums"
+                style={{
+                  color: rowTotals[r].reconciled ? "var(--muted)" : "var(--danger)",
+                }}
+              >
+                {rowTotals[r].value}
+                {!rowTotals[r].reconciled && (
+                  <span className="sr-only"> does not reconcile</span>
+                )}
               </td>
             )}
           </tr>
@@ -185,8 +357,13 @@ function Grid({ rows, cols, cells, rowTotals, colTotals, onSelect }: GridProps):
         {colTotals && (
           <tr>
             {colTotals.map((total, c) => (
-              <td key={c} className="pt-1 text-sm font-semibold" aria-label={`Column ${String(c + 1)} total`}>
-                {total}
+              <td
+                key={c}
+                className="pt-2 text-[14px] tabular-nums"
+                style={{ color: total.reconciled ? "var(--muted)" : "var(--danger)" }}
+              >
+                {total.value}
+                {!total.reconciled && <span className="sr-only"> does not reconcile</span>}
               </td>
             ))}
           </tr>
@@ -198,201 +375,271 @@ function Grid({ rows, cols, cells, rowTotals, colTotals, onSelect }: GridProps):
 
 function Passage({ words, onSelect }: PassageProps): React.ReactElement {
   return (
-    <p className="text-base leading-relaxed">
-      {words.map((word, i) => (
-        <span key={word.id}>
-          <button
-            type="button"
-            onClick={() => onSelect?.(word.id)}
-            disabled={!onSelect}
-            style={unitStyle(word.state, undefined)}
-            className="rounded px-0.5 disabled:cursor-default"
-          >
-            {word.text}
-          </button>
-          {i < words.length - 1 ? " " : null}
-        </span>
-      ))}
+    <p className="mb-[26px] text-left text-[17px] leading-[1.7]">
+      {words.map((word, i) => {
+        const flagged = word.state === "selected" || word.state === "locked";
+        return (
+          <span key={word.id}>
+            <button
+              type="button"
+              onClick={() => onSelect?.(word.id)}
+              disabled={word.state === "locked" || !onSelect}
+              aria-pressed={flagged}
+              aria-label={`${word.text}${flagged ? ", flagged" : ""}`}
+              style={{
+                background: flagged ? "var(--accent-a)" : "transparent",
+                fontWeight: word.state === "locked" ? 700 : 400,
+              }}
+              className="rounded-[3px] px-[2px] decoration-[var(--line)] decoration-2 underline-offset-4 hover:underline disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--ink)]"
+            >
+              {word.text}
+            </button>
+            {i < words.length - 1 ? " " : null}
+          </span>
+        );
+      })}
     </p>
-  );
-}
-
-function Passes({ label, used, total }: PassesProps): React.ReactElement {
-  return (
-    <div className="flex items-center gap-2 text-sm" aria-label={`${label}: ${String(used)} of ${String(total)} used`}>
-      <span className="font-medium">{label}</span>
-      <span className="flex gap-1" aria-hidden="true">
-        {Array.from({ length: total }, (_, i) => (
-          <span
-            key={i}
-            className="h-2.5 w-2.5 rounded-full border border-[var(--border)]"
-            style={{ background: i < used ? "var(--text)" : "transparent" }}
-          />
-        ))}
-      </span>
-    </div>
-  );
-}
-
-function Actions({ actions }: ActionsProps): React.ReactElement {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {actions.map((action) => (
-        <button
-          key={action.id}
-          type="button"
-          onClick={action.onClick}
-          disabled={action.disabled}
-          className={
-            action.variant === "secondary"
-              ? "rounded-full border-2 border-[var(--border)] px-4 py-1.5 text-sm font-semibold disabled:opacity-40"
-              : "rounded-full bg-[var(--text)] px-4 py-1.5 text-sm font-semibold text-[var(--bg)] disabled:opacity-40"
-          }
-        >
-          {action.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function Feedback({ message, tone }: FeedbackProps): React.ReactElement {
-  const color = tone === "error" ? "#b91c1c" : tone === "success" ? "#15803d" : "var(--text)";
-  return (
-    <p role="status" aria-live="polite" className="text-sm font-medium" style={{ color }}>
-      {message}
-    </p>
-  );
-}
-
-function Log({ entries }: LogProps): React.ReactElement {
-  return (
-    <ul className="flex flex-col gap-1 text-sm" aria-label="History">
-      {entries.map((entry) => (
-        <li key={entry.id}>
-          {entry.author !== undefined && <strong>{entry.author}: </strong>}
-          {entry.text}
-        </li>
-      ))}
-    </ul>
   );
 }
 
 function Modal({ open, title, onClose, children }: ModalProps): React.ReactElement | null {
+  const cardRef = useRef<HTMLDivElement>(null);
+  useOverlay(open, onClose);
+
+  useEffect(() => {
+    if (open) {
+      cardRef.current?.focus();
+    }
+  }, [open]);
+
   if (!open) {
     return null;
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div
+      className="fixed inset-0 z-20 flex items-center justify-center bg-black/55 p-4"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+      role="presentation"
+    >
       <div
+        ref={cardRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="play-modal-title"
-        className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-lg border-2 border-[var(--border)] bg-[var(--bg)] p-6"
+        className="skin-play relative max-h-[92vh] w-[440px] max-w-full overflow-auto rounded-[10px] bg-[var(--paper)] px-7 pb-7 pt-9 text-center"
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 id="play-modal-title" className="text-lg font-bold">
-            {title}
-          </h2>
-          <button type="button" onClick={onClose} aria-label="Close" className="text-xl leading-none">
-            ×
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-[10px] top-[10px] px-[10px] py-[6px] text-[22px] leading-none"
+        >
+          ×
+        </button>
+        <h2
+          id="play-modal-title"
+          className="mb-2 text-[28px] font-black tracking-[-0.02em]"
+        >
+          {title}
+        </h2>
         {children}
       </div>
     </div>
   );
 }
 
-function Slider({ label, min, max, step, value, unit, onChange }: SliderProps): React.ReactElement {
+function Slider({
+  label,
+  min,
+  max,
+  step,
+  value,
+  unit,
+  onChange,
+}: SliderProps): React.ReactElement {
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium">
-      <span>
-        {label}: {value}
-        {unit ?? ""}
-      </span>
+    <div className="mb-[22px]">
       <input
         type="range"
+        aria-label={label}
         min={min}
         max={max}
         step={step ?? 1}
         value={value}
-        onChange={(e) => {
-          onChange(Number(e.target.value));
+        onChange={(event) => {
+          onChange(Number(event.target.value));
         }}
-        className="w-full"
+        className="w-full accent-[var(--ink)]"
       />
+      <div className="flex justify-between text-[13px] text-[var(--muted)]">
+        <span>
+          {min}
+          {unit ?? ""}
+        </span>
+        <span>
+          {max}
+          {unit ?? ""}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function NumberField({
+  label,
+  value,
+  min,
+  max,
+  unit,
+  onChange,
+}: NumberFieldProps): React.ReactElement {
+  return (
+    <label className="mb-[18px] flex flex-col items-center gap-1">
+      <span className="sr-only">{label}</span>
+      <span className="flex items-baseline gap-2">
+        <input
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(event) => {
+            onChange(Number(event.target.value));
+          }}
+          className="w-[220px] rounded-[6px] border border-[var(--ink)] px-3 py-2 text-center text-[34px] font-bold tabular-nums"
+        />
+        {unit !== undefined && unit !== "" && (
+          <span className="text-[16px] text-[var(--muted)]">{unit}</span>
+        )}
+      </span>
     </label>
   );
 }
 
-function LogicGrid({ rowLabels, colLabels, cells, onSelect }: LogicGridProps): React.ReactElement {
+function LogicGrid({
+  rowLabels,
+  colLabels,
+  cells,
+  ariaLabel,
+  onSelect,
+}: LogicGridProps): React.ReactElement {
   const cellFor = (rowId: string, colId: string) =>
     cells.find((cell) => cell.rowId === rowId && cell.colId === colId);
   return (
-    <table className="border-collapse text-center text-sm">
-      <thead>
-        <tr>
-          <th className="sr-only">Row / column</th>
-          {colLabels.map((col) => (
-            <th key={col.id} className="px-1 pb-1 font-medium">
-              {col.label}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rowLabels.map((row) => (
-          <tr key={row.id}>
-            <th scope="row" className="pr-2 text-right font-medium">
-              {row.label}
-            </th>
-            {colLabels.map((col) => {
-              const cell = cellFor(row.id, col.id);
-              const glyph = cell?.state === "yes" ? "✓" : cell?.state === "no" ? "✗" : "";
-              return (
-                <td key={col.id} className="p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => onSelect?.(row.id, col.id)}
-                    disabled={!onSelect}
-                    aria-label={`${row.label}, ${col.label}: ${cell?.state ?? "empty"}`}
-                    className="flex h-8 w-8 items-center justify-center rounded border-2 border-[var(--border)] font-bold disabled:cursor-default"
-                  >
-                    {glyph}
-                  </button>
-                </td>
-              );
-            })}
+    <div className="mb-[26px] overflow-x-auto">
+      <table className="mx-auto border-separate border-spacing-[3px] text-center text-[13px]">
+        <caption className="sr-only">{ariaLabel}</caption>
+        <thead>
+          <tr>
+            <th className="sr-only">Person</th>
+            {colLabels.map((col) => (
+              <th
+                key={col.id}
+                scope="col"
+                className="h-[86px] whitespace-nowrap px-1 align-bottom font-medium text-[var(--muted)]"
+              >
+                <span className="inline-block origin-bottom-left translate-x-3 -rotate-45 whitespace-nowrap">
+                  {col.label}
+                </span>
+              </th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rowLabels.map((row) => (
+            <tr key={row.id}>
+              <th
+                scope="row"
+                className="whitespace-nowrap pr-2 text-right font-medium"
+              >
+                {row.label}
+              </th>
+              {colLabels.map((col) => {
+                const cell = cellFor(row.id, col.id);
+                const state = cell?.state ?? "empty";
+                return (
+                  <td key={col.id}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect?.(row.id, col.id)}
+                      disabled={!onSelect}
+                      aria-label={`${row.label}, ${col.label}: ${state}`}
+                      style={{
+                        background:
+                          state === "yes" ? "var(--accent-b)" : "var(--paper)",
+                        borderColor:
+                          state === "yes" ? "var(--accent-b-lock)" : "var(--line)",
+                      }}
+                      className="flex h-9 w-9 items-center justify-center rounded-[var(--tile-radius)] border-[length:var(--tile-border)] text-[16px] font-bold disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)]"
+                    >
+                      {state === "yes" ? "✓" : state === "no" ? "✗" : ""}
+                    </button>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
-    <div style={ROOT_STYLE} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <main className="mx-auto max-w-[560px] px-4 py-6">
-        <h1 className="text-lg font-bold tracking-tight">
+    <div data-testid="cover-play" className="skin-play min-h-screen">
+      <div className="mx-auto flex max-w-[1100px] items-center justify-between border-b border-[var(--ink)] px-5 py-[14px]">
+        <h1 className="text-[26px] font-black leading-none tracking-[-0.02em]">
           <button type="button" onClick={onExit} className="underline-offset-4 hover:underline">
             Board at Work
           </button>
         </h1>
-        <p className="mt-4 text-sm text-neutral-500">Loading…</p>
+      </div>
+      <main className="mx-auto max-w-[var(--column)] px-[18px] pb-20 pt-7">
+        <p className="text-[20px] font-bold">Nothing to see here.</p>
+        <p className="mt-2 text-[15px] text-[var(--muted)]">
+          Click the wordmark to go back to the puzzle.
+        </p>
       </main>
     </div>
+  );
+}
+
+const FAVICON_SVG =
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='#121212'/><text x='12' y='17' font-size='14' font-family='Georgia' font-weight='700' fill='#F9DF6D' text-anchor='middle'>B</text></svg>";
+
+function Icon({ className }: { className?: string }): React.ReactElement {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="11" fill="#121212" />
+      <text
+        x="12"
+        y="17"
+        fontSize="14"
+        fontFamily="Georgia, serif"
+        fontWeight="700"
+        fill="#F9DF6D"
+        textAnchor="middle"
+      >
+        B
+      </text>
+    </svg>
   );
 }
 
 export const playSkin: SkinPrimitives = {
   id: "play",
   displayName: "Play",
-  favicon: "🎮",
+  Icon,
+  faviconHref: svgFavicon(FAVICON_SVG),
+  tabTitle: "Board at Work",
   Chrome,
+  Prompt,
   TextRun,
-  TileRow,
   Slots,
   Grid,
   Passage,
@@ -400,8 +647,10 @@ export const playSkin: SkinPrimitives = {
   Actions,
   Feedback,
   Log,
+  Summary,
   Modal,
   Slider,
+  NumberField,
   LogicGrid,
   Cover,
 };

@@ -1,0 +1,39 @@
+/*
+ * Docs disguise tokens, extracted from the Work-mode half of
+ * `reference-braid-prototype.html`.
+ */
+.skin-docs {
+  --ink: #202124;
+  --muted: #5f6368;
+  --line: #dadce0;
+  --paper: #ffffff;
+  --canvas: #f9fbfd;
+  --blue: #0b57d0;
+  --chip: #c2e7ff;
+
+  --accent-a: #fff2a8;
+  --accent-b: #c8ebd3;
+  --accent-c: #c6e2f5;
+  --accent-a-lock: #ffd34d;
+  --accent-b-lock: #6dd094;
+  --accent-c-lock: #7cc1f0;
+
+  --danger: #c5221f;
+
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+/*
+ * Section numbering is positional, so it is a CSS counter rather than a
+ * prop: the Docs skin never learns which game filled which section.
+ */
+.skin-docs .doc-page {
+  counter-reset: doc-section;
+}
+
+.skin-docs .doc-section > h3::before {
+  counter-increment: doc-section;
+  content: counter(doc-section) ". ";
+}

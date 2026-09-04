@@ -18,18 +18,37 @@ export function render(
   dispatch: (move: ForecastMove) => void,
   skin: SkinPrimitives,
 ): React.ReactNode {
-  const { Slider, Passes, Actions, Feedback, Log } = skin;
+  const { Prompt, NumberField, Slider, Passes, Actions, Feedback } = skin;
   const total = state.puzzle.questions.length;
   const question = state.puzzle.questions[state.index];
 
+  // The score for the question just answered, held on screen while the
+  // next one is posed, so no answer is scored out of sight.
+  const previous = state.puzzle.questions[state.index - 1];
+  const previousResult = state.results[state.index - 1];
+
   return (
-    <div className="flex flex-col gap-6">
-      <Passes label="Question" used={state.index} total={total} />
+    <>
+      <Prompt
+        headline={question ? question.question : "That's all five."}
+        note={
+          question
+            ? `Question ${String(state.index + 1)} of ${String(total)}`
+            : `${String(state.results.reduce((sum, r) => sum + (r?.points ?? 0), 0))} of ${String(MAX_POINTS)} points`
+        }
+      />
       {question && (
-        <div className="flex flex-col gap-3">
-          <p className="text-base font-medium">
-            Question {state.index + 1} of {total}: {question.question}
-          </p>
+        <>
+          <NumberField
+            label={question.question}
+            min={state.min}
+            max={state.max}
+            value={state.value}
+            unit={question.unit}
+            onChange={(value) => {
+              dispatch({ type: "setValue", value });
+            }}
+          />
           <Slider
             label={question.question}
             min={state.min}
@@ -41,8 +60,9 @@ export function render(
               dispatch({ type: "setValue", value });
             }}
           />
-        </div>
+        </>
       )}
+      <Passes label="Answered" used={state.index} total={total} />
       <Actions
         actions={[
           {
@@ -68,8 +88,14 @@ export function render(
           },
         ]}
       />
-      <Feedback message={state.message} tone={toneFor(state)} />
-      <Log entries={state.log} />
-    </div>
+      <Feedback
+        message={
+          previous && previousResult && !state.done
+            ? `Q${String(state.index)}: you said ${String(previousResult.value)}${previous.unit}, actual ${String(previous.answer)}${previous.unit} — ${String(previousResult.points)} points.`
+            : state.message
+        }
+        tone={toneFor(state)}
+      />
+    </>
   );
 }

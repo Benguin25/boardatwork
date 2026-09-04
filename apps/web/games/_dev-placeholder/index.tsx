@@ -150,8 +150,8 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
   shareGrid,
   render(state, dispatch, skin) {
     const {
+      Prompt,
       TextRun,
-      TileRow,
       Slots,
       Grid,
       Passage,
@@ -159,115 +159,129 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
       Actions,
       Feedback,
       Log,
+      Summary,
       Modal,
       Slider,
+      NumberField,
       LogicGrid,
     } = skin;
     return (
-      <div className="flex flex-col gap-6">
-        <section aria-label="Text run demo">
-          <TextRun
-            items={[
-              { id: "a", text: "B", groupId: "g1", state: state.selectedId === "a" ? "selected" : "default" },
-              { id: "b", text: "R", groupId: "g2" },
-              { id: "c", text: "A", groupId: "g1" },
-              { id: "d", text: "I", groupId: "g2", state: "locked" },
-              { id: "e", text: "D", groupId: "g1", state: "wrong" },
-            ]}
-            groupTokens={{ g1: "--accent-a", g2: "--accent-b" }}
-            onSelect={(id) => {
-              dispatch({ type: "select", id });
-            }}
-          />
-        </section>
-        <section aria-label="Tile row demo">
-          <TileRow
-            rows={[
-              {
-                id: "row1",
-                label: "Strand A",
-                items: [
-                  { id: "r1a", text: "B", state: "correct" },
-                  { id: "r1b", text: "A" },
-                  { id: "r1c", text: "D" },
-                ],
-              },
-              {
-                id: "row2",
-                label: "Strand B",
-                items: [
-                  { id: "r2a", text: "R" },
-                  { id: "r2b", text: "I" },
-                ],
-              },
-            ]}
-          />
-        </section>
-        <section aria-label="Slots demo">
-          <Slots
-            slots={[
-              { id: "s1", value: "X", state: "correct" },
-              { id: "s2", value: null, placeholder: "_" },
-            ]}
-            onSelect={(id) => {
-              dispatch({ type: "select", id });
-            }}
-          />
-        </section>
-        <section aria-label="Grid demo">
-          <Grid
-            rows={2}
-            cols={2}
-            cells={[
-              { id: "g1", value: "12" },
-              { id: "g2", value: "7", state: "wrong" },
-              { id: "g3", value: "3" },
-              { id: "g4", value: "9" },
-            ]}
-            rowTotals={[19, 12]}
-            colTotals={[15, 16]}
-            onSelect={(id) => {
-              dispatch({ type: "select", id });
-            }}
-          />
-        </section>
-        <section aria-label="Passage demo">
-          <Passage
-            words={[
-              { id: "w1", text: "The" },
-              { id: "w2", text: "cot" },
-              { id: "w3", text: "sat", state: "wrong" },
-              { id: "w4", text: "quietly" },
-            ]}
-            onSelect={(id) => {
-              dispatch({ type: "select", id });
-            }}
-          />
-        </section>
+      <>
+        <Prompt headline="Every primitive, one screen." tone="revealed" note="Skin smoke test" />
+        <TextRun
+          ariaLabel="Text run demo"
+          items={[
+            { id: "a", text: "B", groupId: "g1", state: state.selectedId === "a" ? "selected" : "default" },
+            { id: "b", text: "R", groupId: "g2" },
+            { id: "c", text: "A", groupId: "g1" },
+            { id: "d", text: "I", groupId: "g2", state: "locked" },
+            { id: "e", text: "D", groupId: "g1", state: "wrong" },
+          ]}
+          groupTokens={{ g1: "--accent-a", g2: "--accent-b" }}
+          onSelect={(id) => {
+            dispatch({ type: "select", id });
+          }}
+        />
+        <Slots
+          groupTokens={{ g1: "--accent-a", g2: "--accent-b" }}
+          rows={[
+            {
+              id: "row1",
+              ariaLabel: "Strand 1",
+              groupId: "g1",
+              note: "2 / 3",
+              slots: [
+                { id: "r1a", value: "B" },
+                { id: "r1b", value: "A" },
+                { id: "r1c", value: null },
+              ],
+            },
+            {
+              id: "row2",
+              ariaLabel: "Strand 2",
+              groupId: "g2",
+              note: "1 / 2",
+              slots: [
+                { id: "r2a", value: "R" },
+                { id: "r2b", value: null },
+              ],
+            },
+          ]}
+        />
+        <Grid
+          rows={2}
+          cols={2}
+          ariaLabel="Grid demo"
+          cells={[
+            { id: "g1", value: "12" },
+            { id: "g2", value: "7", state: "selected" },
+            { id: "g3", value: "3" },
+            { id: "g4", value: "9" },
+          ]}
+          rowTotals={[
+            { value: 19, reconciled: true },
+            { value: 12, reconciled: false },
+          ]}
+          colTotals={[
+            { value: 15, reconciled: true },
+            { value: 16, reconciled: true },
+          ]}
+          onSelect={(id) => {
+            dispatch({ type: "select", id });
+          }}
+        />
+        <Passage
+          words={[
+            { id: "w1", text: "The" },
+            { id: "w2", text: "cot", state: "selected" },
+            { id: "w3", text: "sat" },
+            { id: "w4", text: "quietly" },
+          ]}
+          onSelect={(id) => {
+            dispatch({ type: "select", id });
+          }}
+        />
+        <NumberField
+          label="Estimate"
+          min={0}
+          max={100}
+          value={state.sliderValue}
+          unit="%"
+          onChange={(value) => {
+            dispatch({ type: "set-slider", value });
+          }}
+        />
+        <Slider
+          label="Estimate"
+          min={0}
+          max={100}
+          value={state.sliderValue}
+          unit="%"
+          onChange={(value) => {
+            dispatch({ type: "set-slider", value });
+          }}
+        />
+        <LogicGrid
+          ariaLabel="Logic grid demo"
+          rowLabels={[{ id: "priya", label: "Priya" }]}
+          colLabels={[{ id: "design", label: "Design" }]}
+          cells={[{ rowId: "priya", colId: "design", state: state.logicCell }]}
+          onSelect={() => {
+            dispatch({ type: "toggle-logic-cell" });
+          }}
+        />
+        <Summary
+          ariaLabel="Summary demo"
+          items={[{ id: "priya", label: "Priya", value: "Design · Platform" }]}
+        />
+        <Log
+          ariaLabel="Log demo"
+          entries={[
+            ...state.log,
+            { id: "probe", author: "You", text: "kernel", status: "yes" as const },
+          ]}
+        />
         <Passes label="Checks" used={state.checksUsed} total={CHECKS} />
-        <Passes label="Hints" used={state.hintsUsed} total={HINTS} />
-        <section aria-label="Slider demo">
-          <Slider
-            label="Estimate"
-            min={0}
-            max={100}
-            value={state.sliderValue}
-            unit="%"
-            onChange={(value) => {
-              dispatch({ type: "set-slider", value });
-            }}
-          />
-        </section>
-        <section aria-label="Logic grid demo">
-          <LogicGrid
-            rowLabels={[{ id: "priya", label: "Priya" }]}
-            colLabels={[{ id: "design", label: "Design" }]}
-            cells={[{ rowId: "priya", colId: "design", state: state.logicCell }]}
-            onSelect={() => {
-              dispatch({ type: "toggle-logic-cell" });
-            }}
-          />
-        </section>
         <Actions
           actions={[
             { id: "check", label: "Check", onClick: () => undefined, disabled: true },
@@ -282,7 +296,6 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
           ]}
         />
         <Feedback message={state.feedback || "Ready."} tone={state.done ? "success" : "neutral"} />
-        <Log entries={state.log} />
         <Modal
           open={state.modalOpen}
           title="How to play"
@@ -292,7 +305,7 @@ export const placeholderGame: GameModule<PlaceholderPuzzle, PlaceholderState, Pl
         >
           <p>This fixture exercises every skin primitive for Gate 2.</p>
         </Modal>
-      </div>
+      </>
     );
   },
 };

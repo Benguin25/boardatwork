@@ -4,7 +4,7 @@ import { playSkin } from "@/skins/play";
 import { forecastGame } from "./index";
 
 describe("forecastGame.render (via Play skin)", () => {
-  it("renders the current question, a slider, progress, actions, feedback, and log", () => {
+  it("renders the current question, a number field and slider, progress, actions, and feedback", () => {
     const puzzle = forecastGame.generate(2, "medium");
     const state = forecastGame.init(puzzle);
     const dispatch = vi.fn();
@@ -13,7 +13,7 @@ describe("forecastGame.render (via Play skin)", () => {
 
     expect(screen.getByText(/Question 1 of 5/)).toBeInTheDocument();
     expect(screen.getByRole("slider")).toBeInTheDocument();
-    expect(screen.getByText("Question")).toBeInTheDocument(); // Passes label
+    expect(screen.getByText("Answered")).toBeInTheDocument(); // Passes label
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(state.message);
@@ -71,8 +71,10 @@ describe("forecastGame.render (via Play skin)", () => {
     let state = forecastGame.init(puzzle);
     state = { ...state, index: 1, results: [{ value: 0, error: 1, points: 0 }, undefined, undefined, undefined, undefined] };
     rtlRender(<>{forecastGame.render(state, vi.fn(), playSkin)}</>);
-    expect(screen.getByRole("status")).toHaveClass("text-sm"); // sanity: Feedback rendered
-    expect(screen.getByRole("status")).toHaveStyle({ color: "#b91c1c" }); // Play skin's "error" tone colour
+    expect(screen.getByRole("status")).toHaveAttribute(
+      "style",
+      expect.stringContaining("var(--danger)"),
+    );
   });
 
   it("hides the slider and disables Submit once the puzzle is done", () => {

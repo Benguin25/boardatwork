@@ -18,18 +18,34 @@ export default function SkinPreviewPage({
   const skin = getSkin(skinId);
   const puzzle = placeholderGame.generate(1, "medium");
   const [state, dispatch] = useReducer(
-    (s: ReturnType<typeof placeholderGame.init>, move: PlaceholderMove) => placeholderGame.reduce(s, move),
+    (s: ReturnType<typeof placeholderGame.init>, move: PlaceholderMove) =>
+      placeholderGame.reduce(s, move),
     puzzle,
     placeholderGame.init,
   );
   const [covered, setCovered] = useState(false);
 
   if (covered) {
-    return <skin.Cover onExit={() => { setCovered(false); }} />;
+    return (
+      <skin.Cover
+        onExit={() => {
+          setCovered(false);
+        }}
+      />
+    );
   }
 
   return (
-    <skin.Chrome title="Placeholder" onTitleClick={() => { setCovered(true); }}>
+    <skin.Chrome
+      title="Placeholder"
+      subtitle="#0"
+      meta="Skin preview"
+      nav={[{ id: "how-to-play", label: "How to play", onClick: () => undefined }]}
+      onTitleClick={() => {
+        setCovered(true);
+      }}
+      onChangeDisguise={() => undefined}
+    >
       {placeholderGame.render(state, dispatch, skin)}
     </skin.Chrome>
   );

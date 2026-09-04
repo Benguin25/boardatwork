@@ -4,16 +4,15 @@ import { playSkin } from "@/skins/play";
 import { braidGame } from "./index";
 
 describe("braidGame.render (via Play skin)", () => {
-  it("renders the rope, strands, passes, actions, feedback, and log", () => {
+  it("renders the rope, strands, checks counter, actions, and feedback", () => {
     const puzzle = braidGame.generate(2, "medium");
     const state = braidGame.init(puzzle);
     const dispatch = vi.fn();
 
     rtlRender(<>{braidGame.render(state, dispatch, playSkin)}</>);
 
-    expect(screen.getByRole("group", { name: "Letters" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Braided letters" })).toBeInTheDocument();
     expect(screen.getByText(/Checks/)).toBeInTheDocument();
-    expect(screen.getByText(/Hints/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Clear" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument();
@@ -26,7 +25,7 @@ describe("braidGame.render (via Play skin)", () => {
     const dispatch = vi.fn();
 
     rtlRender(<>{braidGame.render(state, dispatch, playSkin)}</>);
-    const rope = within(screen.getByRole("group", { name: "Letters" }));
+    const rope = within(screen.getByRole("group", { name: "Braided letters" }));
     rope.getAllByRole("button")[0]!.click();
 
     expect(dispatch).toHaveBeenCalledWith({ type: "assign", index: 0 });
@@ -39,7 +38,7 @@ describe("braidGame.render (via Play skin)", () => {
     expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
   });
 
-  it("reveals the theme text in the log once the check count requires it", () => {
+  it("reveals the theme text once the check count requires it", () => {
     const puzzle = braidGame.generate(2, "medium");
     let state = braidGame.init(puzzle);
     state = { ...state, themeRevealed: true };

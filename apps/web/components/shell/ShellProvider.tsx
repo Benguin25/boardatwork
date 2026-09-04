@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { emojiFavicon } from "@/lib/favicon";
 import { useShellStore } from "@/lib/shell-store";
-import { getSkin } from "@/skins/registry";
+import { getDisguise, playSkin } from "@/skins/registry";
 
 function setFaviconLink(href: string): void {
   let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
@@ -24,7 +23,7 @@ export function ShellProvider({ children }: { children: React.ReactNode }): Reac
   const hydrate = useShellStore((s) => s.hydrate);
   const hydrated = useShellStore((s) => s.hydrated);
   const mode = useShellStore((s) => s.mode);
-  const skinId = useShellStore((s) => s.skin);
+  const disguise = useShellStore((s) => s.disguise);
   const toggleMode = useShellStore((s) => s.toggleMode);
 
   useEffect(() => {
@@ -33,9 +32,15 @@ export function ShellProvider({ children }: { children: React.ReactNode }): Reac
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        toggleMode();
+      if (event.key !== "Escape") {
+        return;
       }
+      // An open modal or menu owns Esc; it closes itself and stops the
+      // event before this listener sees it (see `useOverlay`).
+      if (useShellStore.getState().overlays > 0) {
+        return;
+      }
+      toggleMode();
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {
@@ -47,15 +52,10 @@ export function ShellProvider({ children }: { children: React.ReactNode }): Reac
     if (!hydrated) {
       return;
     }
-    if (mode === "work") {
-      const skin = getSkin(skinId);
-      document.title = `${skin.displayName} — Board at Work`;
-      setFaviconLink(emojiFavicon(skin.favicon));
-    } else {
-      document.title = "Board at Work";
-      setFaviconLink(emojiFavicon("🎮"));
-    }
-  }, [hydrated, mode, skinId]);
+    const skin = mode === "work" ? getDisguise(disguise) : playSkin;
+    document.title = skin.tabTitle;
+    setFaviconLink(skin.faviconHref);
+  }, [hydrated, mode, disguise]);
 
   return <>{children}</>;
 }

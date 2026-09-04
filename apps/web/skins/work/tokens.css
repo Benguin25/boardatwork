@@ -1,0 +1,149 @@
+/*
+ * Tokens for the seven kit-based disguises. Each skin root defines the
+ * same vocabulary — ink/muted/line/paper/canvas, a brand pair, three
+ * accents with darker `-lock` companions, and a danger colour — so
+ * `skins/kit` can style every primitive without knowing which app it is
+ * dressed as.
+ */
+.skin-sheets {
+  --ink: #202124;
+  --muted: #5f6368;
+  --line: #e1e3e1;
+  --paper: #ffffff;
+  --canvas: #ffffff;
+  --brand: #0f9d58;
+  --brand-ink: #ffffff;
+  --accent-a: #fff2a8;
+  --accent-b: #c8ebd3;
+  --accent-c: #c6e2f5;
+  --accent-a-lock: #f2c200;
+  --accent-b-lock: #0f9d58;
+  --accent-c-lock: #1967d2;
+  --danger: #c5221f;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-slides {
+  --ink: #202124;
+  --muted: #5f6368;
+  --line: #dadce0;
+  --paper: #ffffff;
+  --canvas: #f1f3f4;
+  --brand: #f4b400;
+  --brand-ink: #202124;
+  --accent-a: #fde293;
+  --accent-b: #ceead6;
+  --accent-c: #d2e3fc;
+  --accent-a-lock: #b06000;
+  --accent-b-lock: #137333;
+  --accent-c-lock: #1967d2;
+  --danger: #c5221f;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-slack {
+  --ink: #1d1c1d;
+  --muted: #616061;
+  --line: #ddd;
+  --paper: #ffffff;
+  --canvas: #ffffff;
+  --sidebar: #3f0e40;
+  --sidebar-ink: #cfc3cf;
+  --brand: #007a5a;
+  --brand-ink: #ffffff;
+  --accent-a: #fdf0c8;
+  --accent-b: #d6f0e0;
+  --accent-c: #d7e7fb;
+  --accent-a-lock: #946f00;
+  --accent-b-lock: #007a5a;
+  --accent-c-lock: #1264a3;
+  --danger: #e01e5a;
+  font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-jira {
+  --ink: #172b4d;
+  --muted: #5e6c84;
+  --line: #dfe1e6;
+  --paper: #ffffff;
+  --canvas: #f4f5f7;
+  --brand: #0052cc;
+  --brand-ink: #ffffff;
+  --accent-a: #fff0b3;
+  --accent-b: #e3fcef;
+  --accent-c: #deebff;
+  --accent-a-lock: #974f0c;
+  --accent-b-lock: #006644;
+  --accent-c-lock: #0747a6;
+  --danger: #de350b;
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-outlook {
+  --ink: #242424;
+  --muted: #616161;
+  --line: #e1dfdd;
+  --paper: #ffffff;
+  --canvas: #faf9f8;
+  --brand: #0f6cbd;
+  --brand-ink: #ffffff;
+  --accent-a: #fff4ce;
+  --accent-b: #dff6dd;
+  --accent-c: #deecf9;
+  --accent-a-lock: #8a6a00;
+  --accent-b-lock: #107c10;
+  --accent-c-lock: #0f6cbd;
+  --danger: #a4262c;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-notion {
+  --ink: #37352f;
+  --muted: #787066;
+  --line: #e9e9e7;
+  --paper: #ffffff;
+  --canvas: #ffffff;
+  --sidebar: #f7f6f3;
+  --brand: #2383e2;
+  --brand-ink: #ffffff;
+  --accent-a: #fbf3db;
+  --accent-b: #ddedea;
+  --accent-c: #ddebf1;
+  --accent-a-lock: #8a6d20;
+  --accent-b-lock: #1d6b56;
+  --accent-c-lock: #1a5b8a;
+  --danger: #b3261e;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.skin-terminal {
+  --ink: #d7ffd7;
+  --muted: #7f9f7f;
+  --line: #2f3f2f;
+  --paper: #0c0f0c;
+  --canvas: #050705;
+  --brand: #33cc66;
+  --brand-ink: #050705;
+  --accent-a: #4a4416;
+  --accent-b: #17452b;
+  --accent-c: #16374a;
+  --accent-a-lock: #d7c04a;
+  --accent-b-lock: #4ad787;
+  --accent-c-lock: #4ab4d7;
+  --danger: #ff6b6b;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color: var(--ink);
+  background: var(--canvas);
+}

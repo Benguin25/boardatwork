@@ -1,11 +1,28 @@
 import type { LogicGridCell, SkinPrimitives } from "@/components/primitives/types";
-import { MAX_CHECKS, MAX_HINTS, canCheck, type CellMark, type OrgMove, type OrgState } from "./engine";
+import {
+  MAX_CHECKS,
+  MAX_HINTS,
+  canCheck,
+  type CellMark,
+  type OrgMove,
+  type OrgState,
+} from "./engine";
 
-export function render(state: OrgState, dispatch: (move: OrgMove) => void, skin: SkinPrimitives): React.ReactNode {
-  const { LogicGrid, Passes, Actions, Feedback, Log } = skin;
+const ROLE_COLS = 5;
+const COL_COUNT = 10;
+
+export function render(
+  state: OrgState,
+  dispatch: (move: OrgMove) => void,
+  skin: SkinPrimitives,
+): React.ReactNode {
+  const { Prompt, LogicGrid, Log, Summary, Passes, Actions, Feedback } = skin;
   const { puzzle, marks } = state;
 
-  const rowLabels = puzzle.people.map((person, p) => ({ id: `person-${String(p)}`, label: person }));
+  const rowLabels = puzzle.people.map((person, p) => ({
+    id: `person-${String(p)}`,
+    label: person,
+  }));
   const colLabels = [
     ...puzzle.roles.map((role, r) => ({ id: `role-${String(r)}`, label: `${role} lead` })),
     ...puzzle.teams.map((team, t) => ({ id: `team-${String(t)}`, label: team })),
@@ -13,35 +30,66 @@ export function render(state: OrgState, dispatch: (move: OrgMove) => void, skin:
 
   const cells: LogicGridCell[] = [];
   puzzle.people.forEach((_, p) => {
-    for (let col = 0; col < 10; col += 1) {
-      const colId = col < 5 ? `role-${String(col)}` : `team-${String(col - 5)}`;
-      cells.push({ rowId: `person-${String(p)}`, colId, state: marks[p]?.[col] as CellMark });
+    for (let col = 0; col < COL_COUNT; col += 1) {
+      const colId = col < ROLE_COLS ? `role-${String(col)}` : `team-${String(col - ROLE_COLS)}`;
+      cells.push({
+        rowId: `person-${String(p)}`,
+        colId,
+        state: marks[p]?.[col] as CellMark,
+      });
     }
   });
 
+  // Only the ticks the player has placed — a person's row resolves once
+  // exactly one role and one team are marked "yes".
+  const resolved = puzzle.people.map((person, p) => {
+    const row = marks[p] ?? [];
+    const roleIdx = row.findIndex((mark, col) => col < ROLE_COLS && mark === "yes");
+    const teamIdx = row.findIndex((mark, col) => col >= ROLE_COLS && mark === "yes");
+    const role = roleIdx >= 0 ? puzzle.roles[roleIdx] : undefined;
+    const team = teamIdx >= 0 ? puzzle.teams[teamIdx - ROLE_COLS] : undefined;
+    return {
+      id: `resolved-${String(p)}`,
+      label: person,
+      value: role === undefined && team === undefined ? "—" : `${role ?? "?"} · ${team ?? "?"}`,
+    };
+  });
+
+  const markedCount = marks.reduce(
+    (sum, row) => sum + row.filter((mark) => mark === "yes").length,
+    0,
+  );
+
   return (
-    <div className="flex flex-col gap-6">
+    <>
+      <Prompt
+        headline="Work out who leads what, and which team they sit in."
+        note={`${String(markedCount)} of ${String(puzzle.people.length * 2)} assignments marked`}
+      />
+      <Log entries={puzzle.clues.map((clue) => ({ id: clue.id, text: clue.text }))} ariaLabel="Clues" />
       <LogicGrid
         rowLabels={rowLabels}
         colLabels={colLabels}
         cells={cells}
+        ariaLabel="People against roles and teams"
         onSelect={(rowId, colId) => {
           const person = Number(rowId.split("-")[1]);
           const [kind, indexStr] = colId.split("-");
           const index = Number(indexStr);
-          const col = kind === "role" ? index : index + 5;
+          const col = kind === "role" ? index : index + ROLE_COLS;
           dispatch({ type: "mark", person, col });
         }}
       />
-      <div className="flex flex-wrap gap-4">
-        <Passes label="Checks" used={state.checksUsed} total={MAX_CHECKS} />
-        <Passes label="Hints" used={state.hintsUsed} total={MAX_HINTS} />
-      </div>
+      <Summary items={resolved} ariaLabel="Resolved assignments" />
+      <Passes label="Checks" used={state.checksUsed} total={MAX_CHECKS} />
       <Actions
         actions={[
           {
             id: "hint",
-            label: state.hintsUsed >= MAX_HINTS ? "No hints left" : `Hint${state.hintsUsed ? ` (${String(MAX_HINTS - state.hintsUsed)} left)` : ""}`,
+            label:
+              state.hintsUsed >= MAX_HINTS
+                ? "No hints left"
+                : `Hint${state.hintsUsed ? ` (${String(MAX_HINTS - state.hintsUsed)} left)` : ""}`,
             variant: "secondary",
             disabled: state.done || state.hintsUsed >= MAX_HINTS,
             onClick: () => {
@@ -59,8 +107,10 @@ export function render(state: OrgState, dispatch: (move: OrgMove) => void, skin:
           },
         ]}
       />
-      <Feedback message={state.message} tone={state.done ? (state.won ? "success" : "error") : "neutral"} />
-      <Log entries={state.log} />
-    </div>
+      <Feedback
+        message={state.message}
+        tone={state.done ? (state.won ? "success" : "error") : "neutral"}
+      />
+    </>
   );
 }

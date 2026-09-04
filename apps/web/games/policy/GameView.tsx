@@ -1,6 +1,17 @@
 import { RULES } from "@boardatwork/rules";
-import type { ActionItem, SkinPrimitives, TextRunItem } from "@/components/primitives/types";
-import { canGuess, MAX_HINTS, MIN_PROBES_TO_GUESS, type PolicyMove, type PolicyState } from "./engine";
+import type {
+  ActionItem,
+  LogEntry,
+  SkinPrimitives,
+  TextRunItem,
+} from "@/components/primitives/types";
+import {
+  MAX_HINTS,
+  MIN_PROBES_TO_GUESS,
+  canGuess,
+  type PolicyMove,
+  type PolicyState,
+} from "./engine";
 
 function ruleById(id: string) {
   const rule = RULES.find((r) => r.id === id);
@@ -25,10 +36,12 @@ export function render(
   dispatch: (move: PolicyMove) => void,
   skin: SkinPrimitives,
 ): React.ReactNode {
-  const { TextRun, Actions, Feedback, Log, Modal, Passes } = skin;
+  const { Prompt, TextRun, Log, Actions, Feedback, Modal, Passes } = skin;
 
-  const probedWords = new Set(state.probes.map((p) => p.word));
-  const availableWords = state.puzzle.probeCandidates.filter((word) => !probedWords.has(word));
+  const probedWords = new Set(state.probes.map((probe) => probe.word));
+  const availableWords = state.puzzle.probeCandidates.filter(
+    (word) => !probedWords.has(word),
+  );
 
   const probeItems: TextRunItem[] = availableWords.map((word) => ({
     id: `${PROBE_PREFIX}${word}`,
@@ -36,43 +49,55 @@ export function render(
     ariaLabel: `Probe the word ${word}`,
   }));
 
+  const transcript: LogEntry[] = [
+    ...state.puzzle.examples.map((word, i) => ({
+      id: `example-${String(i)}`,
+      author: "Host",
+      text: word,
+      status: "yes" as const,
+    })),
+    ...state.probes.map((probe, i) => ({
+      id: `probe-log-${String(i)}`,
+      author: "You",
+      text: probe.word,
+      status: probe.satisfies ? ("yes" as const) : ("no" as const),
+    })),
+  ];
+
   const candidateActions: ActionItem[] = state.puzzle.candidateIds
     .filter((id) => !state.eliminatedIds.includes(id))
-    .map((id) => {
-      const rule = ruleById(id);
-      return {
-        id: `guess-${id}`,
-        label: rule.description,
-        disabled: state.done,
-        onClick: () => {
-          dispatch({ type: "guess", ruleId: id });
-        },
-      };
-    });
+    .map((id) => ({
+      id: `guess-${id}`,
+      label: ruleById(id).description,
+      disabled: state.done,
+      onClick: () => {
+        dispatch({ type: "guess", ruleId: id });
+      },
+    }));
 
   return (
-    <div className="flex flex-col gap-6">
-      <Log entries={state.log} />
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">
-          {availableWords.length > 0 ? "Tap a word to probe it against the rule:" : "No more words to probe."}
-        </p>
-        <TextRun
-          items={probeItems}
-          onSelect={(id) => {
-            dispatch({ type: "probe", word: id.slice(PROBE_PREFIX.length) });
-          }}
-        />
-      </div>
-      <div className="flex flex-wrap gap-4">
-        <Passes label="Probes" used={state.probes.length} total={MIN_PROBES_TO_GUESS} />
-        <Passes label="Hints" used={state.hintsUsed} total={MAX_HINTS} />
-      </div>
+    <>
+      <Prompt
+        headline="One rule decides every word. Probe until you can name it."
+        note={`${String(state.probes.length)} probes · ${String(MIN_PROBES_TO_GUESS)} needed before guessing`}
+      />
+      <Log entries={transcript} ariaLabel="Probe log" />
+      <TextRun
+        items={probeItems}
+        ariaLabel="Words you can probe"
+        onSelect={(id) => {
+          dispatch({ type: "probe", word: id.slice(PROBE_PREFIX.length) });
+        }}
+      />
+      <Passes label="Probes" used={state.probes.length} total={MIN_PROBES_TO_GUESS} />
       <Actions
         actions={[
           {
             id: "hint",
-            label: state.hintsUsed >= MAX_HINTS ? "No hints left" : `Hint${state.hintsUsed ? ` (${String(MAX_HINTS - state.hintsUsed)} left)` : ""}`,
+            label:
+              state.hintsUsed >= MAX_HINTS
+                ? "No hints left"
+                : `Hint${state.hintsUsed ? ` (${String(MAX_HINTS - state.hintsUsed)} left)` : ""}`,
             variant: "secondary",
             disabled: state.done || state.hintsUsed >= MAX_HINTS,
             onClick: () => {
@@ -90,7 +115,10 @@ export function render(
           },
         ]}
       />
-      <Feedback message={state.message} tone={state.done ? (state.won ? "success" : "error") : "neutral"} />
+      <Feedback
+        message={state.message}
+        tone={state.done ? (state.won ? "success" : "error") : "neutral"}
+      />
       <Modal
         open={state.guessModalOpen}
         title="Guess the rule"
@@ -98,11 +126,9 @@ export function render(
           dispatch({ type: "toggle-guess-modal" });
         }}
       >
-        <div className="flex flex-col gap-3">
-          <p className="text-sm">Which rule fit every probe so far?</p>
-          <Actions actions={candidateActions} />
-        </div>
+        <p className="mb-3 text-left">Which rule fit every probe so far?</p>
+        <Actions actions={candidateActions} />
       </Modal>
-    </div>
+    </>
   );
 }

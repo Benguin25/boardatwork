@@ -1,480 +1,253 @@
 "use client";
 
 import type {
-  ActionsProps,
+  ChromeNavItem,
   ChromeProps,
-  FeedbackProps,
-  GridProps,
-  LogProps,
-  LogicGridProps,
-  ModalProps,
-  PassageProps,
-  PassesProps,
   SkinPrimitives,
-  SliderProps,
-  SlotsProps,
-  TextRunProps,
-  TileRowProps,
-  UnitState,
 } from "@/components/primitives/types";
+import { svgFavicon } from "@/lib/favicon";
+import { createKitPrimitives } from "../kit";
+import { SkinMenu, chromeMenuItems } from "../shared/menu";
+import { RailContext, useRail } from "../shared/rail";
 
-/**
- * Slack skin: a chat-app disguise. The puzzle body renders as a message in
- * a fake channel, feedback and history arrive as threaded replies, and a
- * decorative (non-interactive) channel sidebar sells the idiom. Behaviour
- * mirrors the Play skin exactly (SPEC §3.1) — only the visual language and
- * DOM shape differ.
- */
-const ROOT_STYLE: React.CSSProperties = {
-  ["--tile-bg" as string]: "#f8f8f8",
-  ["--accent-a" as string]: "#fde68a",
-  ["--accent-b" as string]: "#bbf7d0",
-  ["--accent-c" as string]: "#bfdbfe",
-  ["--text" as string]: "#1d1c1d",
-  ["--bg" as string]: "#ffffff",
-  ["--border" as string]: "#dcd8dc",
-  ["--rail" as string]: "#3f0e40",
-  ["--rail-text" as string]: "#f4ede4",
-  ["--rail-active" as string]: "#521752",
-  fontFamily:
-    'Slack-Lato, "Helvetica Neue", ui-sans-serif, system-ui, -apple-system, sans-serif',
-};
+/** Slack disguise — see `docs/design/disguises.md` for the chrome checklist. */
 
-const CHANNELS = ["#general", "#design-review", "#random", "#watercooler"];
+const WORKSPACE = "Northwind";
+const CHANNEL = "proj-platform";
+const CHANNELS = ["general", "proj-platform", "design-review", "incidents", "random"];
+const DMS = [
+  { name: "Priya R.", online: true },
+  { name: "Sam O.", online: false },
+  { name: "Marta K.", online: true },
+];
 
-function unitStyle(state: UnitState | undefined, token: string | undefined): React.CSSProperties {
-  const base: React.CSSProperties = {
-    background: token ? `var(${token})` : "var(--tile-bg)",
-    border: "1px solid var(--border)",
-    color: "var(--text)",
-  };
-  if (state === "wrong") {
-    base.background = "#fecaca";
-    base.textDecoration = "line-through";
-    base.borderColor = "#b91c1c";
-  } else if (state === "correct") {
-    base.fontWeight = 700;
-    base.borderColor = "#15803d";
-  } else if (state === "locked") {
-    base.fontWeight = 700;
-    base.borderStyle = "dashed";
-  } else if (state === "selected") {
-    base.outline = "2px solid #1264a3";
-    base.outlineOffset = "1px";
-  }
-  return base;
+const FAVICON_SVG =
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='#3F0E40'/><path fill='#fff' d='M8 6.5a1.5 1.5 0 1 1 3 0V10H9.5A1.5 1.5 0 0 1 8 8.5zm5.5 3.5a1.5 1.5 0 1 1 0-3H17v1.5A1.5 1.5 0 0 1 15.5 10zM16 13.5a1.5 1.5 0 1 1-3 0V10h1.5a1.5 1.5 0 0 1 1.5 1.5zM10.5 14a1.5 1.5 0 1 1 0 3H7v-1.5A1.5 1.5 0 0 1 8.5 14z'/></svg>";
+
+function Icon({ className }: { className?: string }): React.ReactElement {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" data-testid="slack-icon">
+      <rect width="24" height="24" rx="5" fill="#3F0E40" />
+      <path
+        fill="#fff"
+        d="M8 6.5a1.5 1.5 0 1 1 3 0V10H9.5A1.5 1.5 0 0 1 8 8.5zm5.5 3.5a1.5 1.5 0 1 1 0-3H17v1.5A1.5 1.5 0 0 1 15.5 10zM16 13.5a1.5 1.5 0 1 1-3 0V10h1.5a1.5 1.5 0 0 1 1.5 1.5zM10.5 14a1.5 1.5 0 1 1 0 3H7v-1.5A1.5 1.5 0 0 1 8.5 14z"
+      />
+    </svg>
+  );
 }
 
-function Sidebar(): React.ReactElement {
+function Sidebar({
+  nav,
+  onChangeDisguise,
+  onExitMode,
+}: {
+  nav: readonly ChromeNavItem[];
+  onChangeDisguise: () => void;
+  onExitMode: (() => void) | undefined;
+}): React.ReactElement {
   return (
-    <nav
-      aria-label="Channels"
-      className="hidden w-48 shrink-0 flex-col gap-1 bg-[var(--rail)] px-2 py-4 text-[var(--rail-text)] sm:flex"
+    <aside
+      data-testid="slack-sidebar"
+      className="hidden w-[240px] flex-none flex-col bg-[var(--sidebar)] px-2 pb-4 pt-3 text-[15px] text-[var(--sidebar-ink)] md:flex"
     >
-      <p className="px-2 pb-2 text-xs font-bold uppercase tracking-wide opacity-70">Channels</p>
-      <ul className="flex flex-col gap-0.5">
-        {CHANNELS.map((name, i) => (
-          <li key={name}>
-            <span
-              className={
-                "block truncate rounded px-2 py-1 text-sm " +
-                (i === 0 ? "bg-[var(--rail-active)] font-semibold" : "opacity-80")
-              }
-            >
-              {name}
+      <div className="mb-3 flex items-center gap-2 px-2">
+        <span className="flex-1 truncate text-[17px] font-black text-white">{WORKSPACE}</span>
+        <SkinMenu
+          triggerLabel="Workspace settings"
+          triggerClassName="flex h-7 w-7 items-center justify-center rounded bg-[#7b4fbf] text-[12px] font-semibold text-white"
+          trigger={<span aria-hidden="true">Z</span>}
+          align="left"
+          items={chromeMenuItems(nav, onChangeDisguise, onExitMode)}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={onChangeDisguise}
+        className="mb-4 self-start rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-[var(--sidebar)]"
+      >
+        New
+      </button>
+      <p className="px-2 pb-1 text-[13px] font-semibold">Channels</p>
+      <ul className="mb-4">
+        {CHANNELS.map((channel) => (
+          <li
+            key={channel}
+            className={`truncate rounded px-2 py-1 ${
+              channel === CHANNEL ? "bg-[#1164a3] font-bold text-white" : ""
+            }`}
+          >
+            <span aria-hidden="true" className="mr-1.5 opacity-70">
+              #
             </span>
+            {channel}
           </li>
         ))}
       </ul>
-    </nav>
-  );
-}
-
-function Chrome({ title, children, onTitleClick }: ChromeProps): React.ReactElement {
-  return (
-    <div style={ROOT_STYLE} className="flex min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-[var(--border)] px-4 py-3 shadow-sm">
-          <h1 className="text-base font-bold">
-            {onTitleClick ? (
-              <button
-                type="button"
-                onClick={onTitleClick}
-                className="rounded underline-offset-4 hover:underline"
-              >
-                # {title}
-              </button>
-            ) : (
-              <>#{" "}{title}</>
-            )}
-          </h1>
-        </header>
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">{children}</main>
-      </div>
-    </div>
-  );
-}
-
-function TextRun({ items, groupTokens, onSelect }: TextRunProps): React.ReactElement {
-  return (
-    <div className="flex flex-wrap gap-1" role="group" aria-label="Letters">
-      {items.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          onClick={() => onSelect?.(item.id)}
-          aria-label={item.ariaLabel ?? item.text}
-          aria-pressed={item.state === "selected"}
-          disabled={!onSelect}
-          style={unitStyle(item.state, item.groupId ? groupTokens?.[item.groupId] : undefined)}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-base font-semibold uppercase disabled:cursor-default"
-        >
-          {item.text}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function TileRow({ rows, groupTokens, onSelect }: TileRowProps): React.ReactElement {
-  return (
-    <div className="flex flex-col gap-2">
-      {rows.map((row) => (
-        <div key={row.id} className="rounded-md border border-[var(--border)] bg-[var(--bg)] p-2">
-          {row.label !== undefined && (
-            <p className="mb-1 text-xs font-semibold text-neutral-500">{row.label}</p>
-          )}
-          <div className="flex flex-wrap gap-1" role="group" aria-label={row.label ?? "Row"}>
-            {row.items.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onSelect?.(row.id, item.id)}
-                aria-label={item.ariaLabel ?? item.text}
-                disabled={!onSelect}
-                style={unitStyle(item.state, item.groupId ? groupTokens?.[item.groupId] : undefined)}
-                className="flex h-8 items-center justify-center rounded-full px-2 text-sm font-semibold uppercase disabled:cursor-default"
-              >
-                {item.text}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Slots({ slots, onSelect }: SlotsProps): React.ReactElement {
-  return (
-    <div className="flex flex-wrap gap-1" role="group" aria-label="Answer slots">
-      {slots.map((slot) => (
-        <button
-          key={slot.id}
-          type="button"
-          onClick={() => onSelect?.(slot.id)}
-          aria-label={slot.value ?? slot.placeholder ?? "Empty slot"}
-          disabled={!onSelect}
-          style={unitStyle(slot.state, undefined)}
-          className="flex h-9 w-9 items-center justify-center rounded text-base font-semibold disabled:cursor-default"
-        >
-          {slot.value ?? ""}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function MessageBubble({
-  author,
-  children,
-}: {
-  author: string;
-  children: React.ReactNode;
-}): React.ReactElement {
-  return (
-    <div className="flex gap-3">
-      <div
-        aria-hidden="true"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[var(--accent-c)] text-sm font-bold"
-      >
-        {author.slice(0, 1).toUpperCase()}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-bold">
-          {author} <span className="ml-1 font-normal text-neutral-400">now</span>
-        </p>
-        <div className="mt-0.5 text-sm">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function Grid({ rows, cols, cells, rowTotals, colTotals, onSelect }: GridProps): React.ReactElement {
-  return (
-    <div className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--tile-bg)] p-2 font-mono">
-      <table className="border-collapse text-center">
-        <tbody>
-          {Array.from({ length: rows }, (_, r) => (
-            <tr key={r}>
-              {Array.from({ length: cols }, (_, c) => {
-                const cell = cells[r * cols + c];
-                if (!cell) return <td key={c} />;
-                return (
-                  <td key={cell.id} className="p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => onSelect?.(cell.id)}
-                      disabled={!onSelect}
-                      aria-label={`Row ${String(r + 1)}, column ${String(c + 1)}: ${cell.value}`}
-                      style={unitStyle(cell.state, undefined)}
-                      className="flex h-9 w-9 items-center justify-center rounded text-sm font-medium disabled:cursor-default"
-                    >
-                      {cell.value}
-                    </button>
-                  </td>
-                );
-              })}
-              {rowTotals && (
-                <td className="pl-2 text-sm font-semibold" aria-label={`Row ${String(r + 1)} total`}>
-                  {rowTotals[r]}
-                </td>
-              )}
-            </tr>
-          ))}
-          {colTotals && (
-            <tr>
-              {colTotals.map((total, c) => (
-                <td key={c} className="pt-1 text-sm font-semibold" aria-label={`Column ${String(c + 1)} total`}>
-                  {total}
-                </td>
-              ))}
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function Passage({ words, onSelect }: PassageProps): React.ReactElement {
-  return (
-    <p className="rounded border border-[var(--border)] bg-[var(--tile-bg)] p-3 text-sm leading-relaxed">
-      {words.map((word, i) => (
-        <span key={word.id}>
-          <button
-            type="button"
-            onClick={() => onSelect?.(word.id)}
-            disabled={!onSelect}
-            style={unitStyle(word.state, undefined)}
-            className="rounded px-0.5 disabled:cursor-default"
-          >
-            {word.text}
-          </button>
-          {i < words.length - 1 ? " " : null}
-        </span>
-      ))}
-    </p>
-  );
-}
-
-function Passes({ label, used, total }: PassesProps): React.ReactElement {
-  return (
-    <div
-      className="flex items-center gap-2 text-xs font-medium text-neutral-600"
-      aria-label={`${label}: ${String(used)} of ${String(total)} used`}
-    >
-      <span>{label}</span>
-      <span className="flex gap-1" aria-hidden="true">
-        {Array.from({ length: total }, (_, i) => (
-          <span
-            key={i}
-            className="h-2.5 w-2.5 rounded-full border border-[var(--border)]"
-            style={{ background: i < used ? "#611f69" : "transparent" }}
-          />
+      <p className="px-2 pb-1 text-[13px] font-semibold">Direct messages</p>
+      <ul>
+        {DMS.map((dm) => (
+          <li key={dm.name} className="flex items-center gap-2 rounded px-2 py-1">
+            <span
+              aria-hidden="true"
+              className="h-2 w-2 rounded-full border border-current"
+              style={{ background: dm.online ? "#2bac76" : "transparent" }}
+            />
+            {dm.name}
+          </li>
         ))}
-      </span>
-    </div>
+      </ul>
+    </aside>
   );
 }
 
-function Actions({ actions }: ActionsProps): React.ReactElement {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {actions.map((action) => (
-        <button
-          key={action.id}
-          type="button"
-          onClick={action.onClick}
-          disabled={action.disabled}
-          className={
-            action.variant === "secondary"
-              ? "rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 text-sm font-semibold text-[var(--text)] hover:bg-[var(--tile-bg)] disabled:opacity-40"
-              : "rounded bg-[#611f69] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
-          }
-        >
-          {action.label}
-        </button>
-      ))}
-    </div>
-  );
-}
+function Chrome({
+  meta,
+  subtitle,
+  notice,
+  nav,
+  onTitleClick,
+  onChangeDisguise,
+  onExitMode,
+  children,
+}: ChromeProps): React.ReactElement {
+  const { slots, setFeedbackEl, setPassesEl, setActionsEl } = useRail();
 
-function Feedback({ message, tone }: FeedbackProps): React.ReactElement {
-  const color = tone === "error" ? "#b91c1c" : tone === "success" ? "#15803d" : "var(--text)";
   return (
-    <p
-      role="status"
-      aria-live="polite"
-      className="rounded border-l-4 bg-[var(--tile-bg)] px-3 py-2 text-sm font-medium"
-      style={{ color, borderLeftColor: color }}
-    >
-      {message}
-    </p>
-  );
-}
-
-function Log({ entries }: LogProps): React.ReactElement {
-  if (entries.length === 0) {
-    return (
-      <p className="border-l-2 border-[var(--border)] pl-4 text-xs text-neutral-400">
-        No replies yet
-      </p>
-    );
-  }
-  return (
-    <ul
-      className="flex flex-col gap-3 border-l-2 border-[var(--border)] pl-4"
-      aria-label="Thread replies"
-    >
-      {entries.map((entry) => (
-        <li key={entry.id}>
-          <MessageBubble author={entry.author ?? "Thread"}>{entry.text}</MessageBubble>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function Modal({ open, title, onClose, children }: ModalProps): React.ReactElement | null {
-  if (!open) {
-    return null;
-  }
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="slack-modal-title"
-        className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-xl"
-      >
-        <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
-          <h2 id="slack-modal-title" className="text-base font-bold">
-            {title}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="rounded px-1 text-xl leading-none hover:bg-[var(--tile-bg)]"
+    <div data-testid="chrome-slack" className="skin-slack flex min-h-screen">
+      <Sidebar nav={nav} onChangeDisguise={onChangeDisguise} onExitMode={onExitMode} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="border-b border-[var(--line)] px-5 py-3">
+          <h1>
+            <button
+              type="button"
+              onClick={onTitleClick}
+              className="rounded px-1 text-[18px] font-black hover:bg-black/5"
+            >
+              <span aria-hidden="true" className="mr-1 text-[var(--muted)]">
+                #
+              </span>
+              {CHANNEL}
+            </button>
+          </h1>
+          <p className="text-[13px] text-[var(--muted)]" data-testid="slack-topic">
+            18 members · Weekly review thread — {[meta, subtitle].filter(Boolean).join(" · ")}
+          </p>
+        </header>
+        <div className="flex min-h-0 flex-1 flex-wrap">
+          <main className="min-w-0 flex-1 px-5 py-4">
+            {notice !== undefined && (
+              <p className="mb-4 border-l-4 border-[var(--brand)] bg-[var(--accent-b)] px-3 py-2 text-sm">
+                {notice}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <span
+                aria-hidden="true"
+                className="h-9 w-9 flex-none rounded bg-[#e8912d] text-center text-[15px] font-bold leading-9 text-white"
+              >
+                P
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="mb-1">
+                  <strong className="text-[15px] font-black">Priya R.</strong>
+                  <span className="ml-2 text-[12px] text-[var(--muted)]">9:41 AM</span>
+                </p>
+                <RailContext.Provider value={slots}>{children}</RailContext.Provider>
+                <p className="mt-2 text-[13px] font-bold text-[#1264a3]">1 reply</p>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              className="mt-6 flex items-center justify-between rounded-lg border border-[var(--line)] px-3 py-2 text-[15px] text-[var(--muted)]"
+            >
+              <span>Message #{CHANNEL}</span>
+              <span className="text-[var(--brand)]">➤</span>
+            </div>
+          </main>
+          <aside
+            data-testid="slack-thread"
+            className="w-[320px] max-w-full flex-none border-l border-[var(--line)] px-4 py-4"
           >
-            ×
-          </button>
+            <h2 className="mb-1 text-[15px] font-black">Thread</h2>
+            <p className="mb-3 text-[12px] text-[var(--muted)]">#{CHANNEL}</p>
+            <div className="flex gap-2">
+              <span
+                aria-hidden="true"
+                className="h-8 w-8 flex-none rounded bg-[#4a154b] text-center text-[13px] font-bold leading-8 text-white"
+              >
+                R
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="mb-1">
+                  <strong className="text-[14px] font-black">Reviewer</strong>
+                  <span className="ml-2 text-[12px] text-[var(--muted)]">now</span>
+                </p>
+                <div ref={setFeedbackEl} />
+                <div ref={setPassesEl} className="mt-1" />
+                <div ref={setActionsEl} className="mt-2 flex flex-wrap gap-2" />
+              </div>
+            </div>
+          </aside>
         </div>
-        <div className="p-4">{children}</div>
       </div>
-    </div>
-  );
-}
-
-function Slider({ label, min, max, step, value, unit, onChange }: SliderProps): React.ReactElement {
-  return (
-    <label className="flex flex-col gap-1 rounded border border-[var(--border)] bg-[var(--tile-bg)] p-3 text-sm font-medium">
-      <span>
-        {label}: {value}
-        {unit ?? ""}
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step ?? 1}
-        value={value}
-        onChange={(e) => {
-          onChange(Number(e.target.value));
-        }}
-        className="w-full accent-[#611f69]"
-      />
-    </label>
-  );
-}
-
-function LogicGrid({ rowLabels, colLabels, cells, onSelect }: LogicGridProps): React.ReactElement {
-  const cellFor = (rowId: string, colId: string) =>
-    cells.find((cell) => cell.rowId === rowId && cell.colId === colId);
-  return (
-    <div className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--tile-bg)] p-2 font-mono">
-      <table className="border-collapse text-center text-sm">
-        <thead>
-          <tr>
-            <th className="sr-only">Row / column</th>
-            {colLabels.map((col) => (
-              <th key={col.id} className="px-1 pb-1 font-medium">
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rowLabels.map((row) => (
-            <tr key={row.id}>
-              <th scope="row" className="pr-2 text-right font-medium">
-                {row.label}
-              </th>
-              {colLabels.map((col) => {
-                const cell = cellFor(row.id, col.id);
-                const glyph = cell?.state === "yes" ? "✓" : cell?.state === "no" ? "✗" : "";
-                return (
-                  <td key={col.id} className="p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => onSelect?.(row.id, col.id)}
-                      disabled={!onSelect}
-                      aria-label={`${row.label}, ${col.label}: ${cell?.state ?? "empty"}`}
-                      className="flex h-8 w-8 items-center justify-center rounded border border-[var(--border)] bg-[var(--bg)] font-bold disabled:cursor-default"
-                    >
-                      {glyph}
-                    </button>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
 
 function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
   return (
-    <div style={ROOT_STYLE} className="flex min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <Sidebar />
+    <div data-testid="cover-slack" className="skin-slack flex min-h-screen">
+      <aside className="hidden w-[240px] flex-none flex-col bg-[var(--sidebar)] px-2 pb-4 pt-3 text-[15px] text-[var(--sidebar-ink)] md:flex">
+        <span className="mb-4 px-2 text-[17px] font-black text-white">{WORKSPACE}</span>
+        <ul>
+          {CHANNELS.map((channel) => (
+            <li key={channel} className="truncate rounded px-2 py-1">
+              <span aria-hidden="true" className="mr-1.5 opacity-70">
+                #
+              </span>
+              {channel}
+            </li>
+          ))}
+        </ul>
+      </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-[var(--border)] px-4 py-3 shadow-sm">
-          <h1 className="text-base font-bold">
+        <header className="border-b border-[var(--line)] px-5 py-3">
+          <h1>
             <button
               type="button"
               onClick={onExit}
-              className="rounded underline-offset-4 hover:underline"
+              className="rounded px-1 text-[18px] font-black hover:bg-black/5"
             >
-              # general
+              <span aria-hidden="true" className="mr-1 text-[var(--muted)]">
+                #
+              </span>
+              {CHANNEL}
             </button>
           </h1>
+          <p className="text-[13px] text-[var(--muted)]">18 members</p>
         </header>
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">
-          <p className="text-sm text-neutral-400">You&apos;re all caught up.</p>
+        <main className="flex-1 px-5 py-4 text-[15px]">
+          {[
+            { who: "Priya R.", at: "9:41 AM", text: "Standup notes are in the doc, nothing blocking." },
+            { who: "Sam O.", at: "9:52 AM", text: "Vendor renewal is with legal, back by Friday." },
+            { who: "Marta K.", at: "10:04 AM", text: "Moved the roadmap review to Thursday." },
+          ].map((message) => (
+            <div key={message.who} className="mb-4 flex gap-3">
+              <span
+                aria-hidden="true"
+                className="h-9 w-9 flex-none rounded bg-[#4a154b] text-center text-[15px] font-bold leading-9 text-white"
+              >
+                {message.who.charAt(0)}
+              </span>
+              <p>
+                <strong className="font-black">{message.who}</strong>
+                <span className="ml-2 text-[12px] text-[var(--muted)]">{message.at}</span>
+                <br />
+                {message.text}
+              </p>
+            </div>
+          ))}
+          <p className="text-[13px] text-[var(--muted)]">Click the channel name to return.</p>
         </main>
       </div>
     </div>
@@ -484,19 +257,10 @@ function Cover({ onExit }: { onExit: () => void }): React.ReactElement {
 export const slackSkin: SkinPrimitives = {
   id: "slack",
   displayName: "Slack",
-  favicon: "💬",
+  Icon,
+  faviconHref: svgFavicon(FAVICON_SVG),
+  tabTitle: `#${CHANNEL} (Northwind) - Slack`,
   Chrome,
-  TextRun,
-  TileRow,
-  Slots,
-  Grid,
-  Passage,
-  Passes,
-  Actions,
-  Feedback,
-  Log,
-  Modal,
-  Slider,
-  LogicGrid,
   Cover,
+  ...createKitPrimitives({ variant: "highlight", idPrefix: "slack" }),
 };

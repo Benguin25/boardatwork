@@ -4,7 +4,7 @@ import { playSkin } from "@/skins/play";
 import { proofGame } from "./index";
 
 describe("proofGame.render (via Play skin)", () => {
-  it("renders every passage word, passes, actions, feedback, and log", () => {
+  it("renders every passage word, the checks counter, actions, and feedback", () => {
     const puzzle = proofGame.generate(2, "medium");
     const state = proofGame.init(puzzle);
     const dispatch = vi.fn();
@@ -15,7 +15,6 @@ describe("proofGame.render (via Play skin)", () => {
     // Every passage word plus Hint and Check.
     expect(buttons).toHaveLength(puzzle.words.length + 2);
     expect(screen.getByText(/Checks/)).toBeInTheDocument();
-    expect(screen.getByText(/Hints/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(state.message);

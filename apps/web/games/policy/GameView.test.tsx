@@ -9,19 +9,18 @@ function candidateButtons(dialog: ReturnType<typeof within>): HTMLElement[] {
 }
 
 describe("policyGame.render (via Play skin)", () => {
-  it("renders the examples log, probe chips, passes, actions, and feedback", () => {
+  it("renders the probe log, probe chips, probes counter, actions, and feedback", () => {
     const puzzle = policyGame.generate(1, "easy");
     const state = policyGame.init(puzzle);
     const dispatch = vi.fn();
 
     rtlRender(<>{policyGame.render(state, dispatch, playSkin)}</>);
 
-    expect(screen.getByRole("list", { name: "History" })).toBeInTheDocument();
+    const log = within(screen.getByRole("list", { name: "Probe log" }));
     for (const example of puzzle.examples) {
-      expect(screen.getByText(new RegExp(example))).toBeInTheDocument();
+      expect(log.getByText(example)).toBeInTheDocument();
     }
     expect(screen.getByText(/Probes/)).toBeInTheDocument();
-    expect(screen.getByText(/Hints/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Guess the rule" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(state.message);

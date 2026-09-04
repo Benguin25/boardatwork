@@ -4,7 +4,7 @@ import { playSkin } from "@/skins/play";
 import { orgGame } from "./index";
 
 describe("orgGame.render (via Play skin)", () => {
-  it("renders the grid, clue log, passes, actions, and feedback", () => {
+  it("renders the grid, clue list, checks counter, actions, and feedback", () => {
     const puzzle = orgGame.generate(2, "medium");
     const state = orgGame.init(puzzle);
     const dispatch = vi.fn();
@@ -14,7 +14,6 @@ describe("orgGame.render (via Play skin)", () => {
     // 5 people x 10 columns (role UNION team) = 50 addressable cells.
     expect(screen.getAllByRole("button", { name: /: empty$/ })).toHaveLength(50);
     expect(screen.getByText(/Checks/)).toBeInTheDocument();
-    expect(screen.getByText(/Hints/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Hint/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(state.message);

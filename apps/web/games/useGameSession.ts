@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { localDateKey, weekdayDifficulty, type Difficulty, type Score } from "@boardatwork/game-core";
-import { getStorage } from "@/lib/storage";
+import { getProgressStore, getStorage } from "@/lib/storage";
 import type { GameModule } from "./types";
 
 export type PuzzleSource =
@@ -126,6 +126,16 @@ export function useGameSession<P, S, M>(
     }
     movesRef.current = [...movesRef.current, move];
     setState((current) => game.reduce(current, move));
+    if (source.kind === "daily") {
+      // Presentation-only breadcrumb so the home page can say "in
+      // progress"; the authoritative record is still the saved result.
+      void getProgressStore().save({
+        game: game.id,
+        dateKey,
+        movesPlayed: movesRef.current.length,
+        updatedAt: new Date().toISOString(),
+      });
+    }
   }
 
   return { state, dispatch, isDone, score, ready, dateKey, seed, difficulty };
